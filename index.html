@@ -3,531 +3,169 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BOOSTORA – Grow Your Influence</title>
-<meta name="description" content="BOOSTORA helps you grow your social media presence with professional promotion and marketing campaigns.">
-
+<title>BOOSTORA - Social Media Growth Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-font-family:Arial,Helvetica,sans-serif;
-background:#08090c;color:#fff;line-height:1.6;
-}
-:root{--gold:#ffc700;--muted:#a9a9ad}
-a{text-decoration:none;color:inherit}
-.container{width:90%;max-width:1160px;margin:auto}
-
-header{
-background:#090a0d;border-bottom:1px solid #ffffff15;
-padding:20px 0;position:sticky;top:0;z-index:20;
-}
-nav{display:flex;justify-content:space-between;align-items:center;gap:20px}
-.logo{font-size:27px;font-weight:900;letter-spacing:2px}
-.logo span{color:var(--gold)}
-.navlinks{display:flex;align-items:center;gap:23px;font-size:14px}
-.navlinks a:hover{color:var(--gold)}
-.btn{
-display:inline-block;background:var(--gold);color:#101010;
-padding:13px 22px;border-radius:6px;font-weight:bold;
-transition:.2s;
-}
-.btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px #ffc70035}
-.btn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold)}
-
-.hero{
-padding:100px 0 95px;
-background:
-radial-gradient(ellipse at 75% 45%,#a77b1838,transparent 40%),
-radial-gradient(ellipse at 10% 15%,#a77b1820,transparent 35%),
-radial-gradient(#ffffff0a 1px,transparent 1px);
-background-size:auto,auto,25px 25px;
-}
-.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:55px;align-items:center}
-.eyebrow{color:var(--gold);font-size:12px;font-weight:bold;letter-spacing:3px;margin-bottom:18px}
-h1{font-size:clamp(42px,5.7vw,65px);line-height:1.1;margin-bottom:23px}
-h1 span{color:var(--gold)}
-.hero-copy{color:#c0c0c0;font-size:17px;max-width:530px;margin-bottom:28px}
-.actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:28px}
-.badges{display:flex;gap:17px;flex-wrap:wrap;font-size:12px;color:#bbb}
-.badges span:before{content:"✓";color:var(--gold);margin-right:6px}
-
-.phone-area{display:flex;justify-content:center;position:relative}
-.phone{
-width:310px;min-height:510px;padding:30px 20px;
-border:7px solid #303034;border-radius:38px;
-background:linear-gradient(150deg,#1b1b1e,#080809);
-box-shadow:0 0 75px #ffc70035,0 25px 60px #000;
-position:relative;
-}
-.phone:before{
-content:"";position:absolute;top:9px;left:50%;
-transform:translateX(-50%);width:75px;height:7px;
-border-radius:10px;background:#444;
-}
-.phone-logo{
-width:57px;height:57px;border-radius:16px;
-background:var(--gold);color:#111;
-display:grid;place-items:center;font-size:34px;
-font-weight:900;margin:12px auto 12px;
-box-shadow:0 0 25px #ffc70055;
-}
-.phone h3{text-align:center;font-size:20px}
-.handle{text-align:center;color:#aaa;font-size:13px;margin:2px 0 23px}
-.verified{width:16px;height:16px;vertical-align:middle;margin-left:4px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat{
-background:#ffffff0b;border:1px solid #ffffff16;
-padding:12px 4px;border-radius:9px;text-align:center;
-}
-.stat strong{display:block;color:var(--gold);font-size:19px}
-.stat small{font-size:10px;color:#aaa}
-
-.chart{display:block;width:100%;height:115px;margin:22px auto 4px}
-.growth-label{text-align:center;color:var(--gold);font-size:12px;font-weight:bold}
-
-.social-floats{position:absolute;inset:0;pointer-events:none}
-.social{
-position:absolute;width:48px;height:48px;border-radius:14px;
-background:#19191c;border:1px solid #ffffff25;
-display:grid;place-items:center;color:var(--gold);
-font-size:22px;font-weight:bold;box-shadow:0 8px 25px #0009;
-}
-.social.one{left:1%;top:15%}
-.social.two{right:0;top:35%}
-.social.three{left:1%;bottom:20%}
-.social.four{right:5%;bottom:8%}
-
-.section{padding:85px 0}
-.section-heading{text-align:center;margin-bottom:45px}
-.section-heading h2{font-size:36px;margin-bottom:10px}
-.section-heading p{color:var(--muted)}
-.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:15px}
-.card{
-background:#121316;border:1px solid #ffffff17;
-border-radius:13px;padding:24px 17px;text-align:center;
-transition:.2s;
-}
-.card:hover{border-color:var(--gold);transform:translateY(-5px)}
-.card-icon{font-size:32px;color:var(--gold);margin-bottom:10px}
-.card h3{font-size:17px;margin-bottom:8px}
-.card p{font-size:12px;color:#aaa}
-.card .service-types{margin-top:14px;color:#ddd;font-size:12px;line-height:2}
-.card .service-types span{display:block}
-
-.why{background:linear-gradient(120deg,#17140c,#0c0d10)}
-.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:45px;align-items:center}
-.why h2{font-size:39px;line-height:1.2;margin-bottom:20px}
-.why h2 span{color:var(--gold)}
-.why p{color:#aaa;margin-bottom:20px}
-.points{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-.point{padding:19px;background:#ffffff08;border:1px solid #ffffff12;border-radius:10px}
-.point strong{display:block;color:var(--gold);margin-bottom:5px}
-.point small{color:#aaa}
-
-.pricing{display:grid;grid-template-columns:repeat(4,1fr);gap:17px}
-.price-card{
-padding:26px 20px;background:#121316;
-border:1px solid #ffffff18;border-radius:14px;
-}
-.price-card.featured{border-color:var(--gold);box-shadow:0 0 30px #ffc70018}
-.price-card h3{font-size:19px}
-.price{font-size:31px;color:var(--gold);font-weight:900;margin:14px 0}
-.price-card p{font-size:12px;color:#aaa;min-height:55px}
-.price-card ul{list-style:none;margin:18px 0 22px;font-size:13px;color:#ddd}
-.price-card li{padding:6px 0}
-.price-card li:before{content:"✓ ";color:var(--gold)}
-.price-card .btn{font-size:12px;padding:11px 14px}
-
-.testimonials{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-.testimonial{
-background:#121316;border:1px solid #ffffff17;
-padding:27px;border-radius:13px;
-}
-.stars{color:var(--gold);letter-spacing:3px;margin-bottom:12px}
-.testimonial p{color:#bbb;font-size:14px}
-.customer{display:flex;align-items:center;gap:12px;margin-top:20px}
-.avatar{
-width:43px;height:43px;border-radius:50%;
-background:#332a13;color:var(--gold);
-display:grid;place-items:center;font-weight:bold;
-}
-.customer strong{display:block;font-size:14px}
-.customer small{color:#888}
-
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.step{background:#121316;border:1px solid #ffffff15;padding:25px;border-radius:12px}
-.step b{font-size:30px;color:var(--gold)}
-.step h3{margin:8px 0}
-.step p{font-size:13px;color:#aaa}
-
-.cta{
-text-align:center;padding:75px 20px;
-background:radial-gradient(ellipse at center,#a77b1830,transparent 70%),#101114;
-border-top:1px solid #ffffff15;border-bottom:1px solid #ffffff15;
-}
-.cta h2{font-size:36px;margin-bottom:12px}
-.cta p{color:#aaa;margin-bottom:25px}
-
-footer{padding:40px 0;color:#888;font-size:13px}
-.footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-footer a{margin-left:14px}
-footer a:hover{color:var(--gold)}
-
-@media(max-width:950px){
-.hero-grid,.why-grid{grid-template-columns:1fr}
-.hero{text-align:center}
-.hero-copy{margin-left:auto;margin-right:auto}
-.actions,.badges{justify-content:center}
-.cards{grid-template-columns:repeat(3,1fr)}
-.pricing{grid-template-columns:repeat(2,1fr)}
-.phone-area{margin-top:25px}
-}
-@media(max-width:600px){
-header{padding:15px 0}
-nav{flex-direction:column}
-.navlinks{justify-content:center;flex-wrap:wrap;gap:12px;font-size:12px}
-.navlinks .btn{padding:8px 12px}
-.hero{padding:70px 0}
-.cards{grid-template-columns:repeat(2,1fr)}
-.pricing,.testimonials,.steps,.points{grid-template-columns:1fr}
-.section{padding:65px 0}
-.section-heading h2,.cta h2{font-size:29px}
-.phone{width:285px}
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#08080A;color:#fff;overflow-x:hidden}
+.topbar{max-width:1300px;margin:auto;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:center;gap:8px;font-weight:900;letter-spacing:1px}
+.logo b{width:32px;height:32px;background:#FFC700;color:#000;display:flex;align-items:center;justify-content:center;border-radius:50%;font-style:italic}
+.nav{display:flex;gap:22px;font-size:12px;color:#9CA3AF}
+.nav .on{color:#fff;border-bottom:2px solid #FFC700;padding-bottom:3px}
+.btns{display:flex;gap:8px;align-items:center}
+.pill{border:1px solid #222;background:#1A1A1A;padding:7px 14px;border-radius:999px;font-size:11px}
+.gold{background:#FFC700;color:#000;font-weight:800;padding:8px 16px;border-radius:999px;font-size:11px}
+.hero{max-width:1300px;margin:auto;display:grid;grid-template-columns:1.15fr 0.85fr;gap:20px;padding:30px 20px 50px;position:relative}
+@media(max-width:900px){.hero{grid-template-columns:1fr}}
+.kicker{color:#FFC700;font-size:10px;letter-spacing:2px;margin-bottom:12px;display:flex;gap:6px}
+.hero h1{font-size:46px;font-weight:900;line-height:.95;letter-spacing:-1px}
+.hero h1 span{color:#FFC700;display:block}
+.hero p{color:#9CA3AF;font-size:12.5px;line-height:1.6;margin:14px 0 18px;max-width:460px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.btn-primary{background:#FFC700;color:#000;padding:11px 18px;border-radius:999px;font-weight:700;font-size:12px;display:inline-flex;gap:6px}
+.btn-outline{border:1px solid #222;background:#111;padding:11px 18px;border-radius:999px;font-size:12px}
+.badges{display:flex;gap:14px;flex-wrap:wrap;color:#9CA3AF;font-size:11px;margin-top:8px}
+.phone-wrap{position:relative;display:flex;justify-content:center}
+.glow{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(255,199,0,0.22),transparent 68%);right:10%;top:0}
+.phone{width:270px;background:linear-gradient(180deg,#171717,#0E0E0E);border:1px solid #2A2A2A;border-radius:28px;padding:16px;position:relative;z-index:2;box-shadow:0 20px 60px rgba(0,0,0,.8)}
+.circle{width:52px;height:52px;background:#FFC700;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#000;font-weight:900;font-size:24px;margin:10px auto 8px;box-shadow:0 0 20px rgba(255,199,0,.35)}
+.bname{text-align:center;font-weight:700;font-size:14px}
+.bhandle{text-align:center;color:#9CA3AF;font-size:11px;display:flex;justify-content:center;align-items:center;gap:5px;margin-top:2px}
+.verify{width:14px;height:14px;background:#1D9BF0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px}
+.stats{display:flex;justify-content:space-between;margin:16px 4px}
+.stat{text-align:center}
+.stat b{font-size:13px;display:block}
+.stat small{font-size:9px;color:#9CA3AF}
+.section{max-width:1300px;margin:auto;padding:40px 20px}
+.sk{text-align:center;color:#FFC700;font-size:10px;letter-spacing:2px;margin-bottom:8px}
+.stitle{text-align:center;font-size:26px;font-weight:800}
+.ssub{text-align:center;color:#6B7280;font-size:11px;margin:6px 0 22px}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media(max-width:900px){.grid5{grid-template-columns:repeat(2,1fr)}}
+.card{background:#111114;border:1px solid #1F1F23;border-radius:12px;padding:14px}
+.card h4{font-size:12px;margin-bottom:6px}
+.card ul{list-style:none;color:#6B7280;font-size:11px;line-height:1.8}
+.why{display:grid;grid-template-columns:1.2fr 1.8fr;gap:20px;align-items:center}
+@media(max-width:900px){.why{grid-template-columns:1fr}}
+.why h2{font-size:28px;font-weight:800;line-height:1.1}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.feat{background:#111114;border:1px solid #1F1F23;border-radius:10px;padding:12px}
+.feat h5{font-size:11px;margin-bottom:4px}
+.feat p{font-size:10px;color:#6B7280}
+.price-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.toggle{display:flex;background:#111;border:1px solid #222;border-radius:999px;padding:3px}
+.toggle span{padding:6px 12px;border-radius:999px;font-size:11px}
+.toggle .on{background:#FFC700;color:#000;font-weight:700}
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.price-grid{grid-template-columns:1fr}}
+.pcard{background:#111114;border:1px solid #1F1F23;border-radius:12px;padding:14px;position:relative}
+.pcard.pop{border-color:#FFC700;transform:translateY(-6px)}
+.pcard .price{font-size:20px;font-weight:800;margin:6px 0}
+.pcard ul{list-style:none;color:#9CA3AF;font-size:11px;line-height:1.8;margin:8px 0}
+.btn2{width:100%;text-align:center;border:1px solid #222;background:#1A1A1A;padding:8px;border-radius:999px;font-size:11px;display:block;margin-top:8px}
+.pcard.pop .btn2{background:#FFC700;color:#000;border-color:#FFC700;font-weight:700}
+.badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#FFC700;color:#000;font-size:9px;font-weight:700;padding:3px 10px;border-radius:999px}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+@media(max-width:900px){.tgrid{grid-template-columns:1fr 1fr}}
+.tcard{background:#111114;border:1px solid #1F1F23;border-radius:10px;padding:12px}
+.footer{max-width:1300px;margin:20px auto 0;border-top:1px solid #1A1A1A;padding:24px 20px;display:grid;grid-template-columns:1.6fr 1fr 1fr 1.2fr 1fr;gap:16px;color:#6B7280;font-size:10px}
+@media(max-width:900px){.footer{grid-template-columns:1fr 1fr}}
+.footer h5{color:#fff;font-size:11px;margin-bottom:8px}
 </style>
 </head>
-
 <body>
-
-<header>
-<div class="container">
-<nav>
-<a href="#home" class="logo">B<span>OOSTORA</span></a>
-<div class="navlinks">
-<a href="#home">Home</a>
-<a href="#services">Services</a>
-<a href="#pricing">Pricing</a>
-<a href="#about">About</a>
-<a href="#contact">Contact</a>
-<a href="#contact" class="btn">Get Started</a>
+<div class="topbar">
+<div class="logo"><b>B</b> BOOSTORA</div>
+<div class="nav"><span class="on">Home</span><span>Services</span><span>Pricing</span><span>About</span><span>Contact</span></div>
+<div class="btns"><span class="pill">N / $ ▾</span><span class="pill">Log In</span><span class="gold">Get Started</span></div>
 </div>
-</nav>
-</div>
-</header>
 
-<main>
-
-<section class="hero" id="home">
-<div class="container hero-grid">
-
+<div class="hero">
 <div>
-<div class="eyebrow">SOCIAL MEDIA GROWTH PLATFORM</div>
-<h1>Grow Your <span>Influence.</span><br>Expand Your Reach.</h1>
-
-<p class="hero-copy">
-BOOSTORA helps you grow your social media presence with professional promotion, real audience reach and engaging campaigns. Take your brand, content and online influence to the next level.
-</p>
-
-<div class="actions">
-<a href="#pricing" class="btn">Get Started Now →</a>
-<a href="#about" class="btn btn-outline">Discover BOOSTORA</a>
+<div class="kicker">✦ SOCIAL MEDIA GROWTH PLATFORM</div>
+<h1>Grow Your Influence.<br><span>Expand Your Reach.</span></h1>
+<p>Boostora helps you grow your social media presence with real engagement, targeted promotion and powerful marketing services. Get more followers, likes, views and customers — all in one place.</p>
+<div class="actions"><span class="btn-primary">Get Started Now →</span><span class="btn-outline">▶ Watch How It Works</span></div>
+<div class="badges"><span>✓ Real Engagement</span><span>✓ Safe & Secure</span><span>✓ Fast Delivery</span><span>✓ 24/7 Support</span></div>
 </div>
-
-<div class="badges">
-<span>Authentic Promotion</span>
-<span>Safe & Secure</span>
-<span>Campaign Support</span>
-</div>
-</div>
-
-<div class="phone-area">
-
-<div class="social-floats">
-<div class="social one">◎</div>
-<div class="social two">♪</div>
-<div class="social three">▶</div>
-<div class="social four">f</div>
-</div>
-
+<div class="phone-wrap">
+<div class="glow"></div>
 <div class="phone">
-<div class="phone-logo">B</div>
-<h3>Your Brand</h3>
-
-<div class="handle">
-@yourbrand
-<img class="verified"
-src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg"
-alt="Decorative blue verification-style tick">
-</div>
-
+<div class="circle">B</div>
+<div class="bname">Your Brand</div>
+<div class="bhandle">@yourbrand <span class="verify">✔</span></div>
 <div class="stats">
-<div class="stat"><strong>125K</strong><small>Followers</small></div>
-<div class="stat"><strong>2.4M</strong><small>Likes</small></div>
-<div class="stat"><strong>1.8M</strong><small>Views</small></div>
+<div class="stat"><b>125K</b><small>Followers</small></div>
+<div class="stat"><b>2.4M</b><small>Likes</small></div>
+<div class="stat"><b>1.8M</b><small>Views</small></div>
 </div>
-
-<svg class="chart" viewBox="0 0 250 115" role="img" aria-label="Illustrative upward growth arrow">
-<defs>
-<linearGradient id="goldArea" x1="0" y1="0" x2="0" y2="1">
-<stop offset="0%" stop-color="#ffc700" stop-opacity=".35"/>
-<stop offset="100%" stop-color="#ffc700" stop-opacity="0"/>
-</linearGradient>
-</defs>
-<path d="M8 98 L42 78 L72 85 L105 52 L137 62 L170 32 L202 39 L240 7 L240 110 L8 110 Z" fill="url(#goldArea)"/>
-<path d="M8 98 L42 78 L72 85 L105 52 L137 62 L170 32 L202 39 L240 7"
-stroke="#ffc700" stroke-width="6" fill="none"
-stroke-linecap="round" stroke-linejoin="round"/>
-<polygon points="240,7 217,16 231,27" fill="#ffc700"/>
+<div style="height:78px;margin-top:10px">
+<svg viewBox="0 0 180 70" width="100%" height="100%">
+<path d="M 10 60 L 35 45 L 60 50 L 85 30 L 110 35 L 135 15 L 165 8" stroke="#FFC700" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="165,8 150,16 154,8 150,0" fill="#FFC700"/>
 </svg>
-
-<div class="growth-label">MORE FOLLOWERS. MORE OPPORTUNITIES.</div>
 </div>
 </div>
-</div>
-</section>
-
-<section class="section" id="services">
-<div class="container">
-<div class="section-heading">
-<div class="eyebrow">OUR SERVICES</div>
-<h2>Grow Across Every Platform</h2>
-<p>Promotion solutions designed for creators, influencers and businesses.</p>
-</div>
-
-<div class="cards">
-<div class="card">
-<div class="card-icon">◎</div>
-<h3>Instagram</h3>
-<p>Expand your Instagram presence and reach new audiences.</p>
-<div class="service-types">
-<span>Profile Promotion</span>
-<span>Content Promotion</span>
-<span>Audience Reach</span>
 </div>
 </div>
 
-<div class="card">
-<div class="card-icon">♪</div>
-<h3>TikTok</h3>
-<p>Give your videos more opportunities to reach viewers.</p>
-<div class="service-types">
-<span>Video Promotion</span>
-<span>Creator Campaigns</span>
-<span>Audience Reach</span>
+<div class="section">
+<div class="sk">WHAT WE OFFER</div>
+<div class="stitle">Our Social Media <span style="color:#FFC700">Services</span></div>
+<div class="ssub">Choose your platform, pick a service, and start growing today.</div>
+<div class="grid5">
+<div class="card"><h4>Instagram</h4><ul><li>✓ Followers</li><li>✓ Likes</li><li>✓ Comments</li></ul></div>
+<div class="card"><h4>TikTok</h4><ul><li>✓ Followers</li><li>✓ Likes</li><li>✓ Views</li></ul></div>
+<div class="card"><h4>YouTube</h4><ul><li>✓ Subscribers</li><li>✓ Views</li><li>✓ Likes</li></ul></div>
+<div class="card"><h4>Facebook</h4><ul><li>✓ Page Likes</li><li>✓ Followers</li><li>✓ Post Engagement</li></ul></div>
+<div class="card"><h4>X (Twitter)</h4><ul><li>✓ Followers</li><li>✓ Likes</li><li>✓ Retweets</li></ul></div>
 </div>
 </div>
 
-<div class="card">
-<div class="card-icon">▶</div>
-<h3>YouTube</h3>
-<p>Promote your videos and build awareness for your channel.</p>
-<div class="service-types">
-<span>Video Promotion</span>
-<span>Channel Promotion</span>
-<span>Content Reach</span>
-</div>
-</div>
-
-<div class="card">
-<div class="card-icon">f</div>
-<h3>Facebook</h3>
-<p>Help your business page and content reach more people.</p>
-<div class="service-types">
-<span>Page Promotion</span>
-<span>Post Promotion</span>
-<span>Brand Awareness</span>
-</div>
-</div>
-
-<div class="card">
-<div class="card-icon">𝕏</div>
-<h3>X (Twitter)</h3>
-<p>Build awareness and introduce your content to new audiences.</p>
-<div class="service-types">
-<span>Profile Promotion</span>
-<span>Post Promotion</span>
-<span>Brand Awareness</span>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<section class="section why" id="about">
-<div class="container why-grid">
+<div class="section why">
 <div>
-<div class="eyebrow">WHY CHOOSE BOOSTORA</div>
-<h2>Your Growth Is <span>Our Priority.</span></h2>
-<p>
-BOOSTORA is designed to help creators, entrepreneurs and businesses promote their social media presence through transparent marketing campaigns and responsible audience growth.
-</p>
-<a href="#contact" class="btn">Get In Touch</a>
+<div style="color:#FFC700;font-size:10px">WHY CHOOSE BOOSTORA</div>
+<h2>Your Success Is Our <span style="color:#FFC700">Priority.</span></h2>
+<p style="color:#9CA3AF;font-size:11px;margin:10px 0">We use proven marketing strategies to help you grow organically.</p>
+<span class="btn-primary">Start Growing Now →</span>
 </div>
-
-<div class="points">
-<div class="point"><strong>Real Campaigns</strong><small>Promotion focused on genuine audience discovery.</small></div>
-<div class="point"><strong>Secure Experience</strong><small>We prioritise responsible account and customer practices.</small></div>
-<div class="point"><strong>Clear Pricing</strong><small>Understand the proposed service before committing.</small></div>
-<div class="point"><strong>Customer Support</strong><small>Get assistance with campaign enquiries.</small></div>
-</div>
-</div>
-</section>
-
-<section class="section" id="pricing">
-<div class="container">
-<div class="section-heading">
-<div class="eyebrow">OUR PRICING</div>
-<h2>Choose Your Growth Plan</h2>
-<p>Find a campaign budget that suits your goals.</p>
-</div>
-
-<div class="pricing">
-
-<div class="price-card">
-<h3>Basic</h3>
-<div class="price">₦5,000</div>
-<p>For individuals getting started with social media promotion.</p>
-<ul>
-<li>Basic campaign planning</li>
-<li>One platform focus</li>
-<li>Promotion guidance</li>
-<li>Campaign support</li>
-</ul>
-<a href="#contact" class="btn btn-outline">Get Started</a>
-</div>
-
-<div class="price-card featured">
-<h3>Standard</h3>
-<div class="price">₦10,000</div>
-<p>For creators and businesses ready to expand their reach.</p>
-<ul>
-<li>Campaign planning</li>
-<li>Platform promotion strategy</li>
-<li>Content guidance</li>
-<li>Performance review</li>
-</ul>
-<a href="#contact" class="btn">Get Started</a>
-</div>
-
-<div class="price-card">
-<h3>Premium</h3>
-<div class="price">₦20,000</div>
-<p>For brands seeking broader promotional support.</p>
-<ul>
-<li>Extended campaign planning</li>
-<li>Multiple platform strategy</li>
-<li>Campaign monitoring</li>
-<li>Campaign report</li>
-</ul>
-<a href="#contact" class="btn btn-outline">Get Started</a>
-</div>
-
-<div class="price-card">
-<h3>Custom</h3>
-<div class="price">Let's Talk</div>
-<p>For larger campaigns and specific business requirements.</p>
-<ul>
-<li>Custom campaign plan</li>
-<li>Flexible budget</li>
-<li>Tailored promotion strategy</li>
-<li>Personal assistance</li>
-</ul>
-<a href="#contact" class="btn btn-outline">Contact Us</a>
-</div>
-
-</div>
-</div>
-</section>
-
-<section class="section">
-<div class="container">
-<div class="section-heading">
-<div class="eyebrow">HOW IT WORKS</div>
-<h2>Start Growing in Three Steps</h2>
-<p>A clear process from your first enquiry to campaign review.</p>
-</div>
-
-<div class="steps">
-<div class="step">
-<b>01</b>
-<h3>Choose Your Plan</h3>
-<p>Select a suitable campaign budget and tell us your social media goals.</p>
-</div>
-<div class="step">
-<b>02</b>
-<h3>Plan Your Campaign</h3>
-<p>Review the proposed services, deliverables, timeline and costs.</p>
-</div>
-<div class="step">
-<b>03</b>
-<h3>Track Your Progress</h3>
-<p>Receive campaign updates and review the results.</p>
-</div>
-</div>
-</div>
-</section>
-
-<section class="section">
-<div class="container">
-<div class="section-heading">
-<div class="eyebrow">TESTIMONIALS</div>
-<h2>What Our Customers Say</h2>
-<p>Customer experiences will be published here as genuine reviews are received and verified.</p>
-</div>
-
-<div class="testimonials">
-<div class="testimonial">
-<div class="stars">★★★★★</div>
-<p>Verified customer feedback will appear here when this customer story is available.</p>
-<div class="customer">
-<div class="avatar">E</div>
-<div><strong>Emmanuel K.</strong><small>Customer review pending</small></div>
+<div class="feat-grid">
+<div class="feat"><h5>🛡 100% Genuine</h5><p>Real people, real results.</p></div>
+<div class="feat"><h5>⚡ Fast Delivery</h5><p>Get results quickly.</p></div>
+<div class="feat"><h5>📊 Analytics</h5><p>Monitor performance.</p></div>
+<div class="feat"><h5>🔒 Secure</h5><p>Safe transactions.</p></div>
+<div class="feat"><h5>🎧 24/7 Support</h5><p>Always here to help.</p></div>
+<div class="feat"><h5>💰 Affordable</h5><p>Great prices.</p></div>
 </div>
 </div>
 
-<div class="testimonial">
-<div class="stars">★★★★★</div>
-<p>Verified customer feedback will appear here when this customer story is available.</p>
-<div class="customer">
-<div class="avatar">S</div>
-<div><strong>Sophia A.</strong><small>Customer review pending</small></div>
+<div class="section">
+<div class="price-head"><div><h3>Simple & Flexible Pricing</h3><p style="color:#6B7280;font-size:11px">No hidden fees. No surprises.</p></div><div class="toggle"><span class="on">◉ Nigerian Naira</span><span>$ US Dollar</span></div></div>
+<div class="price-grid">
+<div class="pcard"><h4>Basic</h4><div class="price">₦5,000 <small>/month</small></div><ul><li>✓ 500 Followers</li><li>✓ 500 Likes</li></ul><span class="btn2">Get Started</span></div>
+<div class="pcard pop"><div class="badge">Most Popular</div><h4>Standard</h4><div class="price">₦10,000 <small>/month</small></div><ul><li>✓ 1,500 Followers</li><li>✓ 1,500 Likes</li><li>✓ 500 Views</li></ul><span class="btn2">Get Started</span></div>
+<div class="pcard"><h4>Premium</h4><div class="price">₦20,000 <small>/month</small></div><ul><li>✓ 5,000 Followers</li><li>✓ 3,000 Likes</li><li>✓ 2,000 Views</li></ul><span class="btn2">Get Started</span></div>
+<div class="pcard"><h4>Custom Plan</h4><p style="color:#9CA3AF;font-size:11px">Contact Us</p><ul><li>✓ Bulk Orders</li><li>✓ Custom Packages</li></ul><span class="btn2">Get In Touch</span></div>
 </div>
 </div>
-</div>
-</div>
-</section>
 
-<section class="cta" id="contact">
-<div class="container">
-<div class="eyebrow">LET'S GROW TOGETHER</div>
-<h2>Ready to Expand Your Reach?</h2>
-<p>Let's discuss your social media promotion goals.</p>
-<a href="mailto:hello@boostora.example" class="btn">Contact BOOSTORA →</a>
+<div class="section">
+<h3>What Our Customers Say</h3><p style="color:#6B7280;font-size:11px">Real people. Real results.</p>
+<div class="tgrid">
+<div class="tcard"><b>Emmanuel K.</b><br><small>Instagram Growth</small><p>"Boostora really works! My followers increased within a week."</p></div>
+<div class="tcard"><b>Sophia A.</b><br><small>TikTok Growth</small><p>"Amazing service! My views have grown a lot."</p></div>
+<div class="tcard"><b>David M.</b><br><small>YouTube Growth</small><p>"I get more subscribers and views."</p></div>
+<div class="tcard"><b>Faith O.</b><br><small>Facebook Growth</small><p>"Fast, reliable and affordable."</p></div>
 </div>
-</section>
-
-</main>
-
-<footer>
-<div class="container footer-row">
-<div>
-<a href="#home" class="logo">B<span>OOSTORA</span></a>
-<p>Grow Your Influence. Expand Your Reach.</p>
 </div>
-<div>
-<a href="#home">Home</a>
-<a href="#services">Services</a>
-<a href="#pricing">Pricing</a>
-<a href="#about">About</a>
-<a href="#contact">Contact</a>
-</div>
-<div>© <span id="year"></span> BOOSTORA. All rights reserved.</div>
-</div>
-</footer>
 
-<script>
-document.getElementById("year").textContent=new Date().getFullYear();
-</script>
-
+<div class="footer">
+<div><div class="logo"><b>B</b> BOOSTORA</div><p>© 2025 Boostora</p></div>
+<div><h5>Quick Links</h5>Home<br>Services<br>Pricing</div>
+<div><h5>Support</h5>FAQs<br>Terms<br>Privacy</div>
+<div><h5>Contact</h5>support@boostora.com<br>+234 706 724 5878</div>
+<div><h5>Follow Us</h5>Instagram Facebook</div>
+</div>
 </body>
 </html>
