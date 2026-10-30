@@ -667,29 +667,35 @@ footer a {
       </div>
     </div>
 
-    <!-- YELLOW GROWTH ARROW -->
+    <!-- UPDATED THICK, GLOWING YELLOW GROWTH ARROW -->
 
     <div class="chart">
       <b>Your Growth Journey</b>
 
       <svg viewBox="0 0 240 75">
-        <polyline
-          points="5,65 48,55 88,43 128,37 169,18 211,10"
-          fill="none"
-          stroke="#FFC700"
-          stroke-width="4"
-          stroke-linecap="round"
-          stroke-linejoin="round"/>
+        <defs>
+          <filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
 
-        <polyline
-          points="195,10 212,9 207,26"
-          fill="none"
+        <path
+          d="M 8 62 L 42 43 L 72 51 L 105 30 L 137 38 L 174 16 L 211 7"
           stroke="#FFC700"
-          stroke-width="4"
+          stroke-width="6"
+          fill="none"
           stroke-linecap="round"
-          stroke-linejoin="round"/>
+          stroke-linejoin="round"
+          filter="url(#goldGlow)"/>
 
-        <circle cx="211" cy="10" r="4" fill="#FFC700"/>
+        <polygon
+          points="211,7 193,10 205,22"
+          fill="#FFC700"
+          filter="url(#goldGlow)"/>
       </svg>
 
       <small>Illustrative growth preview</small>
