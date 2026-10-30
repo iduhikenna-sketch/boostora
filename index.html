@@ -542,7 +542,7 @@ function updateNavigation(user){
   document.getElementById("userActions").classList.toggle("hidden",!signedIn);
 }
 
-/* SHOW CUSTOMER DASHBOARD */
+/* SHOW CUSTOMER DASHBOARD - IMPROVED */
 async function openDashboard(){
   if(!currentUser) return;
 
@@ -556,9 +556,22 @@ async function openDashboard(){
   document.getElementById("welcomeName").textContent=
     currentUser.user_metadata?.full_name||"Customer";
 
-  await loadProfile();
-  await loadServices();
-  await loadOrders();
+  document.getElementById("serviceList").textContent="Loading services...";
+  document.getElementById("ordersBody").innerHTML=
+    "<tr><td colspan='5'>Loading orders...</td></tr>";
+
+  // All requests run independently.
+  const results=await Promise.allSettled([
+    loadProfile(),
+    loadServices(),
+    loadOrders()
+  ]);
+
+  results.forEach((result,index)=>{
+    if(result.status==="rejected"){
+      console.error("Dashboard request failed:",index,result.reason);
+    }
+  });
 
   window.scrollTo(0,0);
 }
@@ -584,24 +597,30 @@ function backToHome(){
 
 /* READ CUSTOMER PROFILE */
 async function loadProfile(){
-  const {data,error}=await supabaseClient
-    .from("profiles")
-    .select("full_name,balance")
-    .eq("id",currentUser.id)
-    .maybeSingle();
+  const balance=document.getElementById("walletBalance");
 
-  if(error){
-    console.error("Profile error:",error.message);
-    document.getElementById("walletBalance").textContent="Unavailable";
-    return;
-  }
+  try{
+    const {data,error}=await supabaseClient
+      .from("profiles")
+      .select("full_name,balance")
+      .eq("id",currentUser.id)
+      .maybeSingle();
 
-  if(data){
-    document.getElementById("welcomeName").textContent=
-      data.full_name||currentUser.user_metadata?.full_name||"Customer";
+    if(error) throw error;
 
-    document.getElementById("walletBalance").textContent=
-      "₦"+Number(data.balance||0).toLocaleString("en-NG",{minimumFractionDigits:2});
+    if(data){
+      document.getElementById("welcomeName").textContent=
+        data.full_name||currentUser.user_metadata?.full_name||"Customer";
+
+      balance.textContent=
+        "₦"+Number(data.balance||0).toLocaleString("en-NG",{minimumFractionDigits:2});
+    }else{
+      balance.textContent="₦0.00";
+    }
+
+  }catch(error){
+    console.error("Profile error:",error);
+    balance.textContent="Unavailable";
   }
 }
 
@@ -613,62 +632,67 @@ async function loadServices(){
   list.textContent="Loading services...";
   select.innerHTML='<option value="">Choose a service</option>';
 
-  const {data,error}=await supabaseClient
-    .from("services")
-    .select("id,name,platform,type,price_per_1000,min_order,max_order,description")
-    .eq("is_active",true)
-    .order("name");
+  try{
+    const {data,error}=await supabaseClient
+      .from("services")
+      .select("id,name,platform,type,price_per_1000,min_order,max_order,description,is_active")
+      .eq("is_active",true)
+      .order("name");
 
-  if(error){
-    list.textContent="Could not load services: "+error.message;
-    return;
-  }
+    if(error) throw error;
 
-  availableServices=data||[];
+    availableServices=data||[];
 
-  if(!availableServices.length){
-    list.textContent="No active services are available yet.";
-    return;
-  }
+    if(!availableServices.length){
+      list.textContent="No active services found. Please check your services table and permissions.";
+      return;
+    }
 
-  list.innerHTML="";
+    list.innerHTML="";
 
-  availableServices.forEach(service=>{
-    const price=Number(service.price_per_1000||0);
+    availableServices.forEach(service=>{
+      const price=Number(service.price_per_1000||0);
 
-    const row=document.createElement("div");
-    row.className="service-row";
+      const row=document.createElement("div");
+      row.className="service-row";
 
-    const info=document.createElement("div");
-    const name=document.createElement("b");
-    name.textContent=service.name;
+      const info=document.createElement("div");
+      const name=document.createElement("b");
+      name.textContent=service.name;
 
-    const detail=document.createElement("small");
-    detail.textContent=
-      service.platform+" · ₦"+price.toLocaleString("en-NG")+" per 1,000";
+      const detail=document.createElement("small");
+      detail.textContent=
+        (service.platform||"Social Media")+" · ₦"+
+        price.toLocaleString("en-NG")+" per 1,000";
 
-    info.appendChild(name);
-    info.appendChild(detail);
+      info.appendChild(name);
+      info.appendChild(detail);
 
-    const choose=document.createElement("button");
-    choose.className="btn";
-    choose.textContent="Select";
-    choose.type="button";
-    choose.addEventListener("click",()=>{
-      select.value=service.id;
-      updateOrderEstimate();
-      document.getElementById("orderForm").scrollIntoView({behavior:"smooth"});
+      const choose=document.createElement("button");
+      choose.className="btn";
+      choose.textContent="Select";
+      choose.type="button";
+
+      choose.addEventListener("click",()=>{
+        select.value=service.id;
+        updateOrderEstimate();
+        document.getElementById("orderForm").scrollIntoView({behavior:"smooth"});
+      });
+
+      row.appendChild(info);
+      row.appendChild(choose);
+      list.appendChild(row);
+
+      const option=document.createElement("option");
+      option.value=service.id;
+      option.textContent=service.name;
+      select.appendChild(option);
     });
 
-    row.appendChild(info);
-    row.appendChild(choose);
-    list.appendChild(row);
-
-    const option=document.createElement("option");
-    option.value=service.id;
-    option.textContent=service.name;
-    select.appendChild(option);
-  });
+  }catch(error){
+    console.error("Services error:",error);
+    list.textContent="Could not load services: "+error.message;
+  }
 }
 
 /* ESTIMATE ORDER PRICE */
@@ -718,9 +742,12 @@ document.getElementById("orderForm").addEventListener("submit",async function(ev
     return;
   }
 
-  if(!Number.isInteger(quantity)||quantity<Number(service.min_order)||quantity>Number(service.max_order)){
+  const minimum=Number(service.min_order)||1;
+  const maximum=Number(service.max_order)||1000000;
+
+  if(!Number.isInteger(quantity)||quantity<minimum||quantity>maximum){
     message.textContent=
-      "Quantity must be between "+service.min_order+" and "+service.max_order+".";
+      "Quantity must be between "+minimum+" and "+maximum+".";
     return;
   }
 
@@ -774,45 +801,70 @@ async function loadOrders(){
 
   body.innerHTML="<tr><td colspan='5'>Loading orders...</td></tr>";
 
-  const {data,error}=await supabaseClient
-    .from("orders")
-    .select("id,quantity,amount,status,created_at,services(name)")
-    .eq("user_id",currentUser.id)
-    .order("created_at",{ascending:false});
+  try{
+    // First fetch the customer's orders without a nested relationship.
+    const {data:orders,error}=await supabaseClient
+      .from("orders")
+      .select("id,service_id,quantity,amount,status,created_at")
+      .eq("user_id",currentUser.id)
+      .order("created_at",{ascending:false});
 
-  if(error){
-    body.innerHTML="<tr><td colspan='5'>Could not load orders: "+escapeHtml(error.message)+"</td></tr>";
-    return;
-  }
+    if(error) throw error;
 
-  document.getElementById("orderCount").textContent=(data||[]).length;
+    document.getElementById("orderCount").textContent=(orders||[]).length;
 
-  if(!data||!data.length){
-    body.innerHTML="<tr><td colspan='5'>You have not placed any orders yet.</td></tr>";
-    return;
-  }
+    if(!orders||!orders.length){
+      body.innerHTML="<tr><td colspan='5'>You have not placed any orders yet.</td></tr>";
+      return;
+    }
 
-  body.innerHTML="";
+    // Then fetch the service names separately.
+    const serviceIds=[...new Set(orders.map(order=>order.service_id).filter(Boolean))];
 
-  data.forEach(order=>{
-    const row=document.createElement("tr");
+    let serviceNames={};
 
-    const values=[
-      order.services?.name||"Service",
-      order.quantity,
-      "₦"+Number(order.amount||0).toLocaleString("en-NG",{minimumFractionDigits:2}),
-      order.status,
-      new Date(order.created_at).toLocaleDateString("en-NG")
-    ];
+    if(serviceIds.length){
+      const {data:services,error:serviceError}=await supabaseClient
+        .from("services")
+        .select("id,name")
+        .in("id",serviceIds);
 
-    values.forEach(value=>{
-      const cell=document.createElement("td");
-      cell.textContent=value;
-      row.appendChild(cell);
+      if(serviceError) throw serviceError;
+
+      (services||[]).forEach(service=>{
+        serviceNames[String(service.id)]=service.name;
+      });
+    }
+
+    body.innerHTML="";
+
+    orders.forEach(order=>{
+      const row=document.createElement("tr");
+
+      const values=[
+        serviceNames[String(order.service_id)]||"Service",
+        order.quantity,
+        "₦"+Number(order.amount||0).toLocaleString("en-NG",{minimumFractionDigits:2}),
+        order.status,
+        new Date(order.created_at).toLocaleDateString("en-NG")
+      ];
+
+      values.forEach(value=>{
+        const cell=document.createElement("td");
+        cell.textContent=value;
+        row.appendChild(cell);
+      });
+
+      body.appendChild(row);
     });
 
-    body.appendChild(row);
-  });
+  }catch(error){
+    console.error("Orders error:",error);
+
+    body.innerHTML=
+      "<tr><td colspan='5'>Could not load orders: "+
+      escapeHtml(error.message)+"</td></tr>";
+  }
 }
 
 function escapeHtml(value){
@@ -831,10 +883,13 @@ async function signOutUser(){
   }
 
   currentUser=null;
+  availableServices=[];
   updateNavigation(null);
+
   document.getElementById("dashboard").style.display="none";
   document.getElementById("landingPage").style.display="block";
   document.getElementById("siteFooter").style.display="block";
+
   window.scrollTo(0,0);
 }
 
