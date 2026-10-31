@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,6 +27,7 @@ header{background:rgba(8,8,10,.95);border-bottom:1px solid #292929;position:stic
 nav{display:flex;gap:20px;font-size:14px}
 nav a:hover{color:var(--gold)}
 .btn{display:inline-block;background:var(--gold);color:#111;padding:12px 20px;border-radius:7px;font-weight:bold;border:1px solid var(--gold);cursor:pointer}
+.btn:disabled{opacity:.6;cursor:not-allowed}
 .btn-outline{background:transparent;color:white;border-color:#777}
 .actions{display:flex;gap:10px}
 .hero{padding:75px 0;background:radial-gradient(ellipse at top right,rgba(255,199,0,.12),transparent 60%)}
@@ -111,7 +111,7 @@ footer a{display:block;font-size:13px;margin:8px 0}
 .field{margin:12px 0}
 .field label{display:block;font-size:13px;color:#ddd;margin-bottom:5px}
 .field input,.field select{width:100%;padding:12px;border-radius:7px;border:1px solid #444;background:#090a0b;color:white}
-.form-msg{font-size:13px;margin:12px 0;color:var(--gold);min-height:20px}
+.form-msg{font-size:13px;margin:12px 0;color:var(--gold);min-height:20px;overflow-wrap:anywhere}
 .text-btn{background:none;border:0;color:var(--gold);cursor:pointer;text-decoration:underline;font-size:13px}
 .hidden{display:none!important}
 
@@ -123,7 +123,7 @@ footer a{display:block;font-size:13px;margin:8px 0}
 .dash-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:20px 0}
 .dash-stat{background:#17191a;border:1px solid #383838;border-radius:12px;padding:20px}
 .dash-stat span{font-size:13px;color:#bbb}
-.dash-stat strong{display:block;color:var(--gold);font-size:25px;margin-top:5px}
+.dash-stat strong{display:block;color:var(--gold);font-size:25px;margin-top:5px;overflow-wrap:anywhere}
 .dash-columns{display:grid;grid-template-columns:1fr 1.5fr;gap:18px;margin-top:20px}
 .dash-panel{background:#151617;border:1px solid #303333;border-radius:12px;padding:20px;overflow:auto}
 .dash-panel h3{margin-bottom:15px;color:var(--gold)}
@@ -353,8 +353,8 @@ nav{width:100%;justify-content:center;flex-wrap:wrap;gap:14px}
 </div>
 
 <div class="dash-cards">
-<div class="dash-stat"><span>Wallet Balance</span><strong id="walletBalance">₦0.00</strong></div>
-<div class="dash-stat"><span>Total Orders</span><strong id="orderCount">0</strong></div>
+<div class="dash-stat"><span>Wallet Balance</span><strong id="walletBalance">Loading...</strong></div>
+<div class="dash-stat"><span>Total Orders</span><strong id="orderCount">Loading...</strong></div>
 <div class="dash-stat"><span>Account Status</span><strong style="font-size:20px">Active</strong></div>
 </div>
 
@@ -383,7 +383,7 @@ nav{width:100%;justify-content:center;flex-wrap:wrap;gap:14px}
 <tbody id="ordersBody"><tr><td colspan="5">Loading orders...</td></tr></tbody>
 </table>
 </div>
-<p style="font-size:12px;color:#aaa;margin-top:14px">Orders are submitted as pending for review. The order amount is deducted from your wallet after the order is accepted. Wallet funding is not enabled yet.</p>
+<p style="font-size:12px;color:#aaa;margin-top:14px">Orders are submitted as pending for review. The order amount is deducted from your wallet when the order is submitted successfully. Wallet funding is not enabled yet.</p>
 </div>
 </div>
 </section>
@@ -418,517 +418,749 @@ nav{width:100%;justify-content:center;flex-wrap:wrap;gap:14px}
 </div>
 
 <script>
-/* BOOSTORA SUPABASE CONNECTION */
+/* =========================================
+   BOOSTORA SUPABASE CONNECTION
+========================================= */
+
 const SUPABASE_URL = "https://zjtmdapnbypftvrlfuue.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_SMrC3NQlEKey0D9igmu4Yw_6zzzZBYN";
 
+if (!window.supabase) {
+  document.body.insertAdjacentHTML(
+    "afterbegin",
+    '<div style="background:#500;color:white;padding:15px;text-align:center">BOOSTORA could not load its connection library. Please refresh the page.</div>'
+  );
+  throw new Error("Supabase library failed to load.");
+}
+
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
 );
 
 let authMode = "signup";
 let currentUser = null;
 let availableServices = [];
 
-function openAuth(mode="signup"){
-  authMode=mode;
+/* =========================================
+   GENERAL HELPERS
+========================================= */
+
+function withTimeout(promise, milliseconds = 15000) {
+  let timer;
+
+  const timeout = new Promise((resolve, reject) => {
+    timer = setTimeout(() => {
+      reject(new Error("The request took too long. Please check your connection and try again."));
+    }, milliseconds);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => {
+    clearTimeout(timer);
+  });
+}
+
+function formatNaira(value) {
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount)) return "₦0.00";
+
+  return "₦" + amount.toLocaleString("en-NG", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[char]));
+}
+
+function showMessage(element, message) {
+  if (element) element.textContent = message;
+}
+
+/* =========================================
+   LOGIN / REGISTRATION WINDOW
+========================================= */
+
+function openAuth(mode = "signup") {
+  authMode = mode;
   updateAuthForm();
-  document.getElementById("authMessage").textContent="";
+
+  document.getElementById("authMessage").textContent = "";
   document.getElementById("authBackdrop").classList.add("show");
 }
 
-function closeAuth(){
+function closeAuth() {
   document.getElementById("authBackdrop").classList.remove("show");
 }
 
-function switchAuthMode(){
-  authMode=authMode==="signup"?"login":"signup";
+function switchAuthMode() {
+  authMode = authMode === "signup" ? "login" : "signup";
   updateAuthForm();
-  document.getElementById("authMessage").textContent="";
+
+  document.getElementById("authMessage").textContent = "";
 }
 
-function updateAuthForm(){
-  const signup=authMode==="signup";
+function updateAuthForm() {
+  const signup = authMode === "signup";
 
-  document.getElementById("authTitle").textContent=
-    signup?"Create your account":"Welcome back";
+  document.getElementById("authTitle").textContent =
+    signup ? "Create your account" : "Welcome back";
 
-  document.getElementById("authIntro").textContent=
+  document.getElementById("authIntro").textContent =
     signup
-    ?"Register to access your BOOSTORA customer dashboard."
-    :"Log in to manage your BOOSTORA orders.";
+      ? "Register to access your BOOSTORA customer dashboard."
+      : "Log in to manage your BOOSTORA orders.";
 
-  document.getElementById("nameField").classList.toggle("hidden",!signup);
-  document.getElementById("fullName").required=signup;
+  document.getElementById("nameField").classList.toggle("hidden", !signup);
+  document.getElementById("fullName").required = signup;
 
-  document.getElementById("authPassword").autocomplete=
-    signup?"new-password":"current-password";
+  document.getElementById("authPassword").autocomplete =
+    signup ? "new-password" : "current-password";
 
-  document.getElementById("authSubmit").textContent=
-    signup?"Create Account":"Log In";
+  document.getElementById("authSubmit").textContent =
+    signup ? "Create Account" : "Log In";
 
-  document.getElementById("switchText").textContent=
-    signup?"Already have an account?":"Don't have an account?";
+  document.getElementById("switchText").textContent =
+    signup ? "Already have an account?" : "Don't have an account?";
 
-  document.getElementById("switchAuth").textContent=
-    signup?"Log in":"Create account";
+  document.getElementById("switchAuth").textContent =
+    signup ? "Log in" : "Create account";
 }
 
-/* REGISTER AND LOGIN */
-document.getElementById("authForm").addEventListener("submit",async function(event){
+/* =========================================
+   REGISTER AND LOGIN
+========================================= */
+
+document.getElementById("authForm").addEventListener("submit", async function(event) {
   event.preventDefault();
 
-  const message=document.getElementById("authMessage");
-  const button=document.getElementById("authSubmit");
+  const message = document.getElementById("authMessage");
+  const button = document.getElementById("authSubmit");
 
-  const email=document.getElementById("authEmail").value.trim();
-  const password=document.getElementById("authPassword").value;
-  const fullName=document.getElementById("fullName").value.trim();
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  const fullName = document.getElementById("fullName").value.trim();
 
-  button.disabled=true;
-  button.textContent="Please wait...";
-  message.textContent="Connecting securely...";
+  button.disabled = true;
+  button.textContent = "Please wait...";
+  message.textContent = "Connecting securely...";
 
-  try{
-    if(authMode==="signup"){
-      if(!fullName){
+  try {
+    if (authMode === "signup") {
+      if (!fullName) {
         throw new Error("Please enter your full name.");
       }
 
-      const {data,error}=await supabaseClient.auth.signUp({
-        email:email,
-        password:password,
-        options:{
-          data:{full_name:fullName}
-        }
-      });
+      const { data, error } = await withTimeout(
+        supabaseClient.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: fullName }
+          }
+        })
+      );
 
-      if(error) throw error;
+      if (error) throw error;
 
-      if(data.session){
-        currentUser=data.user;
+      if (data.session && data.user) {
+        currentUser = data.user;
         closeAuth();
         await openDashboard();
-      }else{
-        message.textContent=
+      } else {
+        message.textContent =
           "Registration received. Please check your email and confirm your account before logging in.";
       }
 
-    }else{
-      const {data,error}=await supabaseClient.auth.signInWithPassword({
-        email:email,
-        password:password
-      });
+    } else {
+      const { data, error } = await withTimeout(
+        supabaseClient.auth.signInWithPassword({
+          email,
+          password
+        })
+      );
 
-      if(error) throw error;
+      if (error) throw error;
 
-      currentUser=data.user;
+      currentUser = data.user;
       closeAuth();
       await openDashboard();
     }
 
-  }catch(error){
-    message.textContent=error.message||"Something went wrong. Please try again.";
-  }finally{
-    button.disabled=false;
-    button.textContent=authMode==="signup"?"Create Account":"Log In";
+  } catch (error) {
+    console.error("Authentication error:", error);
+
+    message.textContent =
+      error.message || "Something went wrong. Please try again.";
+
+  } finally {
+    button.disabled = false;
+    button.textContent =
+      authMode === "signup" ? "Create Account" : "Log In";
   }
 });
 
-/* UPDATE NAVIGATION WHEN SIGNED IN */
-function updateNavigation(user){
-  const signedIn=!!user;
-  document.getElementById("guestActions").classList.toggle("hidden",signedIn);
-  document.getElementById("userActions").classList.toggle("hidden",!signedIn);
+/* =========================================
+   NAVIGATION
+========================================= */
+
+function updateNavigation(user) {
+  const signedIn = !!user;
+
+  document.getElementById("guestActions")
+    .classList.toggle("hidden", signedIn);
+
+  document.getElementById("userActions")
+    .classList.toggle("hidden", !signedIn);
 }
 
-/* SHOW CUSTOMER DASHBOARD */
-async function openDashboard(){
-  if(!currentUser) return;
+/* =========================================
+   OPEN CUSTOMER DASHBOARD
+========================================= */
 
-  document.getElementById("landingPage").style.display="none";
-  document.getElementById("siteFooter").style.display="none";
-  document.getElementById("dashboard").style.display="block";
+async function openDashboard() {
+  if (!currentUser) return;
+
+  document.getElementById("landingPage").style.display = "none";
+  document.getElementById("siteFooter").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
 
   updateNavigation(currentUser);
 
-  document.getElementById("accountEmail").textContent=currentUser.email||"";
-  document.getElementById("welcomeName").textContent=
-    currentUser.user_metadata?.full_name||"Customer";
+  document.getElementById("accountEmail").textContent =
+    currentUser.email || "";
 
-  document.getElementById("serviceList").textContent="Loading services...";
-  document.getElementById("ordersBody").innerHTML=
+  document.getElementById("welcomeName").textContent =
+    currentUser.user_metadata?.full_name || "Customer";
+
+  document.getElementById("walletBalance").textContent = "Loading...";
+  document.getElementById("orderCount").textContent = "Loading...";
+  document.getElementById("serviceList").textContent = "Loading services...";
+
+  document.getElementById("ordersBody").innerHTML =
     "<tr><td colspan='5'>Loading orders...</td></tr>";
 
-  const results=await Promise.allSettled([
+  document.getElementById("orderMessage").textContent = "";
+
+  const results = await Promise.allSettled([
     loadProfile(),
     loadServices(),
     loadOrders()
   ]);
 
-  results.forEach((result,index)=>{
-    if(result.status==="rejected"){
-      console.error("Dashboard request failed:",index,result.reason);
+  results.forEach((result, index) => {
+    if (result.status === "rejected") {
+      console.error("Dashboard request failed:", index, result.reason);
     }
   });
 
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
 }
 
-async function showDashboard(){
-  const {data,error}=await supabaseClient.auth.getUser();
+async function showDashboard() {
+  try {
+    const { data, error } = await withTimeout(
+      supabaseClient.auth.getUser()
+    );
 
-  if(error||!data.user){
-    openAuth("login");
-    return;
-  }
-
-  currentUser=data.user;
-  await openDashboard();
-}
-
-function backToHome(){
-  document.getElementById("dashboard").style.display="none";
-  document.getElementById("landingPage").style.display="block";
-  document.getElementById("siteFooter").style.display="block";
-  window.scrollTo(0,0);
-}
-
-/* READ CUSTOMER PROFILE AND WALLET */
-async function loadProfile(){
-  const balance=document.getElementById("walletBalance");
-
-  try{
-    const {data,error}=await supabaseClient
-      .from("profiles")
-      .select("full_name,balance")
-      .eq("id",currentUser.id)
-      .maybeSingle();
-
-    if(error) throw error;
-
-    if(data){
-      document.getElementById("welcomeName").textContent=
-        data.full_name||currentUser.user_metadata?.full_name||"Customer";
-
-      balance.textContent=
-        "₦"+Number(data.balance||0).toLocaleString("en-NG",{minimumFractionDigits:2});
-    }else{
-      balance.textContent="Profile unavailable";
-    }
-
-  }catch(error){
-    console.error("Profile error:",error);
-    balance.textContent="Unavailable";
-  }
-}
-
-/* LOAD ACTIVE SERVICES FROM SUPABASE */
-async function loadServices(){
-  const list=document.getElementById("serviceList");
-  const select=document.getElementById("orderService");
-
-  list.textContent="Loading services...";
-  select.innerHTML='<option value="">Choose a service</option>';
-
-  try{
-    const {data,error}=await supabaseClient
-      .from("services")
-      .select("id,name,platform,type,price_per_1000,min_order,max_order,description,is_active")
-      .eq("is_active",true)
-      .order("name");
-
-    if(error) throw error;
-
-    availableServices=data||[];
-
-    if(!availableServices.length){
-      list.textContent="No active services found. Please check your services table and permissions.";
+    if (error || !data.user) {
+      openAuth("login");
       return;
     }
 
-    list.innerHTML="";
+    currentUser = data.user;
+    await openDashboard();
 
-    availableServices.forEach(service=>{
-      const price=Number(service.price_per_1000||0);
+  } catch (error) {
+    console.error("Session check error:", error);
+    openAuth("login");
+  }
+}
 
-      const row=document.createElement("div");
-      row.className="service-row";
+function backToHome() {
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("landingPage").style.display = "block";
+  document.getElementById("siteFooter").style.display = "block";
 
-      const info=document.createElement("div");
-      const name=document.createElement("b");
-      name.textContent=service.name;
+  window.scrollTo(0, 0);
+}
 
-      const detail=document.createElement("small");
-      detail.textContent=
-        (service.platform||"Social Media")+" · ₦"+
-        price.toLocaleString("en-NG")+" per 1,000";
+/* =========================================
+   LOAD CUSTOMER PROFILE AND WALLET
+========================================= */
+
+async function loadProfile() {
+  const balance = document.getElementById("walletBalance");
+
+  try {
+    const { data, error } = await withTimeout(
+      supabaseClient
+        .from("profiles")
+        .select("full_name,balance")
+        .eq("id", currentUser.id)
+        .maybeSingle()
+    );
+
+    if (error) throw error;
+
+    if (!data) {
+      balance.textContent = "Profile unavailable";
+      console.error("No profile row found for:", currentUser.id);
+      return;
+    }
+
+    document.getElementById("welcomeName").textContent =
+      data.full_name ||
+      currentUser.user_metadata?.full_name ||
+      "Customer";
+
+    balance.textContent = formatNaira(data.balance);
+
+  } catch (error) {
+    console.error("Profile loading error:", error);
+    balance.textContent = "Unavailable";
+  }
+}
+
+/* =========================================
+   LOAD ACTIVE SERVICES
+========================================= */
+
+async function loadServices() {
+  const list = document.getElementById("serviceList");
+  const select = document.getElementById("orderService");
+
+  list.textContent = "Loading services...";
+  select.innerHTML = '<option value="">Choose a service</option>';
+
+  try {
+    const { data, error } = await withTimeout(
+      supabaseClient
+        .from("services")
+        .select("id,name,platform,type,price_per_1000,min_order,max_order,description,is_active")
+        .eq("is_active", true)
+        .order("name")
+    );
+
+    if (error) throw error;
+
+    availableServices = data || [];
+
+    if (!availableServices.length) {
+      list.textContent =
+        "No active services found. Please check your services table and permissions.";
+      return;
+    }
+
+    list.innerHTML = "";
+
+    availableServices.forEach(service => {
+      const price = Number(service.price_per_1000 || 0);
+
+      const row = document.createElement("div");
+      row.className = "service-row";
+
+      const info = document.createElement("div");
+
+      const name = document.createElement("b");
+      name.textContent = service.name || "Unnamed service";
+
+      const detail = document.createElement("small");
+      detail.textContent =
+        (service.platform || "Social Media") +
+        " · " + formatNaira(price) + " per 1,000";
 
       info.appendChild(name);
       info.appendChild(detail);
 
-      const choose=document.createElement("button");
-      choose.className="btn";
-      choose.textContent="Select";
-      choose.type="button";
+      const choose = document.createElement("button");
+      choose.className = "btn";
+      choose.textContent = "Select";
+      choose.type = "button";
 
-      choose.addEventListener("click",()=>{
-        select.value=service.id;
+      choose.addEventListener("click", () => {
+        select.value = service.id;
         updateOrderEstimate();
-        document.getElementById("orderForm").scrollIntoView({behavior:"smooth"});
+
+        document.getElementById("orderForm")
+          .scrollIntoView({ behavior: "smooth" });
       });
 
       row.appendChild(info);
       row.appendChild(choose);
       list.appendChild(row);
 
-      const option=document.createElement("option");
-      option.value=service.id;
-      option.textContent=service.name;
+      const option = document.createElement("option");
+      option.value = service.id;
+      option.textContent = service.name;
+
       select.appendChild(option);
     });
 
-  }catch(error){
-    console.error("Services error:",error);
-    list.textContent="Could not load services: "+error.message;
+  } catch (error) {
+    console.error("Services loading error:", error);
+
+    availableServices = [];
+
+    list.textContent =
+      "Could not load services: " + error.message;
   }
 }
 
-/* ESTIMATE ORDER PRICE */
-function updateOrderEstimate(){
-  const service=availableServices.find(
-    item=>String(item.id)===String(document.getElementById("orderService").value)
+/* =========================================
+   ORDER PRICE ESTIMATE
+========================================= */
+
+function updateOrderEstimate() {
+  const service = availableServices.find(
+    item =>
+      String(item.id) ===
+      String(document.getElementById("orderService").value)
   );
 
-  const quantity=Number(document.getElementById("orderQuantity").value);
-  const estimate=document.getElementById("orderEstimate");
+  const quantity = Number(
+    document.getElementById("orderQuantity").value
+  );
 
-  if(!service||!quantity||quantity<1){
-    estimate.textContent="Choose a service and quantity to see the estimate.";
+  const estimate = document.getElementById("orderEstimate");
+
+  if (!service || !quantity || quantity < 1) {
+    estimate.textContent =
+      "Choose a service and quantity to see the estimate.";
     return;
   }
 
-  const amount=Number(service.price_per_1000)*quantity/1000;
-  const price=Math.round((amount+Number.EPSILON)*100)/100;
+  const amount =
+    Number(service.price_per_1000) * quantity / 1000;
 
-  estimate.textContent=
-    "Estimated amount: ₦"+price.toLocaleString("en-NG",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const price = Math.round((amount + Number.EPSILON) * 100) / 100;
+
+  estimate.textContent =
+    "Estimated amount: " + formatNaira(price);
 }
 
-document.getElementById("orderService").addEventListener("change",updateOrderEstimate);
-document.getElementById("orderQuantity").addEventListener("input",updateOrderEstimate);
+document.getElementById("orderService")
+  .addEventListener("change", updateOrderEstimate);
 
-/* SUBMIT ORDER THROUGH SECURE DATABASE FUNCTION */
-document.getElementById("orderForm").addEventListener("submit",async function(event){
-  event.preventDefault();
+document.getElementById("orderQuantity")
+  .addEventListener("input", updateOrderEstimate);
 
-  const message=document.getElementById("orderMessage");
-  const button=this.querySelector("button[type='submit']");
+/* =========================================
+   SUBMIT ORDER THROUGH SECURE DATABASE FUNCTION
+========================================= */
 
-  const service=availableServices.find(
-    item=>String(item.id)===String(document.getElementById("orderService").value)
-  );
+document.getElementById("orderForm")
+  .addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-  const link=document.getElementById("orderLink").value.trim();
-  const quantity=Number(document.getElementById("orderQuantity").value);
+    const message = document.getElementById("orderMessage");
+    const button = this.querySelector("button[type='submit']");
 
-  if(!currentUser){
-    message.textContent="Please log in first.";
-    return;
-  }
+    const service = availableServices.find(
+      item =>
+        String(item.id) ===
+        String(document.getElementById("orderService").value)
+    );
 
-  if(!service){
-    message.textContent="Please select a valid service.";
-    return;
-  }
+    const link = document.getElementById("orderLink").value.trim();
+    const quantity = Number(
+      document.getElementById("orderQuantity").value
+    );
 
-  const minimum=Number(service.min_order)||1;
-  const maximum=Number(service.max_order)||1000000;
-
-  if(!Number.isInteger(quantity)||quantity<minimum||quantity>maximum){
-    message.textContent=
-      "Quantity must be between "+minimum+" and "+maximum+".";
-    return;
-  }
-
-  try{
-    const validUrl=new URL(link);
-
-    if(!["http:","https:"].includes(validUrl.protocol)){
-      throw new Error("Invalid link");
-    }
-  }catch(error){
-    message.textContent="Please enter a valid https:// or http:// link.";
-    return;
-  }
-
-  button.disabled=true;
-  button.textContent="Submitting...";
-  message.textContent="Checking your wallet and submitting your order...";
-
-  try{
-    const {data,error}=await supabaseClient.rpc("place_order",{
-      p_service_id:service.id,
-      p_link:link,
-      p_quantity:quantity
-    });
-
-    if(error) throw error;
-
-    if(!data){
-      throw new Error("The server did not return an order confirmation. Please refresh your dashboard before trying again.");
-    }
-
-    message.textContent=
-      "Your order was submitted successfully. ₦"+
-      Number(data.amount||0).toLocaleString("en-NG",{minimumFractionDigits:2,maximumFractionDigits:2})+
-      " has been deducted from your wallet. Your order is pending review.";
-
-    this.reset();
-    updateOrderEstimate();
-
-    await Promise.all([
-      loadProfile(),
-      loadOrders()
-    ]);
-
-  }catch(error){
-    console.error("Order submission error:",error);
-
-    const errorText=String(error.message||"");
-
-    if(errorText.toLowerCase().includes("insufficient")){
-      message.textContent="Insufficient wallet balance. Please fund your wallet before placing this order.";
-    }else if(errorText.toLowerCase().includes("not authenticated")){
-      message.textContent="Your session has expired. Please log in again.";
-    }else{
-      message.textContent="Order could not be submitted: "+errorText;
-    }
-
-  }finally{
-    button.disabled=false;
-    button.textContent="Submit Order";
-  }
-});
-
-/* LOAD CUSTOMER'S OWN ORDERS */
-async function loadOrders(){
-  const body=document.getElementById("ordersBody");
-
-  body.innerHTML="<tr><td colspan='5'>Loading orders...</td></tr>";
-
-  try{
-    const {data:orders,error}=await supabaseClient
-      .from("orders")
-      .select("id,service_id,quantity,amount,status,created_at")
-      .eq("user_id",currentUser.id)
-      .order("created_at",{ascending:false});
-
-    if(error) throw error;
-
-    document.getElementById("orderCount").textContent=(orders||[]).length;
-
-    if(!orders||!orders.length){
-      body.innerHTML="<tr><td colspan='5'>You have not placed any orders yet.</td></tr>";
+    if (!currentUser) {
+      message.textContent = "Please log in first.";
       return;
     }
 
-    const serviceIds=[...new Set(orders.map(order=>order.service_id).filter(Boolean))];
-
-    let serviceNames={};
-
-    if(serviceIds.length){
-      const {data:services,error:serviceError}=await supabaseClient
-        .from("services")
-        .select("id,name")
-        .in("id",serviceIds);
-
-      if(serviceError) throw serviceError;
-
-      (services||[]).forEach(service=>{
-        serviceNames[String(service.id)]=service.name;
-      });
+    if (!service) {
+      message.textContent = "Please select a valid service.";
+      return;
     }
 
-    body.innerHTML="";
+    const minimum = Number(service.min_order) || 1;
+    const maximum = Number(service.max_order) || 1000000;
 
-    orders.forEach(order=>{
-      const row=document.createElement("tr");
+    if (
+      !Number.isInteger(quantity) ||
+      quantity < minimum ||
+      quantity > maximum
+    ) {
+      message.textContent =
+        "Quantity must be between " + minimum + " and " + maximum + ".";
+      return;
+    }
 
-      const values=[
-        serviceNames[String(order.service_id)]||"Service",
-        order.quantity,
-        "₦"+Number(order.amount||0).toLocaleString("en-NG",{minimumFractionDigits:2,maximumFractionDigits:2}),
-        order.status,
-        new Date(order.created_at).toLocaleDateString("en-NG")
+    try {
+      const validUrl = new URL(link);
+
+      if (!["http:", "https:"].includes(validUrl.protocol)) {
+        throw new Error("Invalid link");
+      }
+
+    } catch (error) {
+      message.textContent =
+        "Please enter a valid https:// or http:// link.";
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Submitting...";
+    message.textContent =
+      "Checking your wallet and submitting your order...";
+
+    try {
+      const { data, error } = await withTimeout(
+        supabaseClient.rpc("place_order", {
+          p_service_id: service.id,
+          p_link: link,
+          p_quantity: quantity
+        }),
+        20000
+      );
+
+      if (error) throw error;
+
+      if (!data) {
+        throw new Error(
+          "The server did not return an order confirmation. Refresh your dashboard and check your orders and wallet before trying again."
+        );
+      }
+
+      const result = Array.isArray(data) ? data[0] : data;
+
+      if (result && result.success === false) {
+        throw new Error(result.message || "The order was not accepted.");
+      }
+
+      const chargedAmount =
+        result?.amount ??
+        result?.total_amount ??
+        result?.order_amount ??
+        0;
+
+      message.textContent =
+        "Your order was submitted successfully. " +
+        formatNaira(chargedAmount) +
+        " has been deducted from your wallet. Your order is pending review.";
+
+      this.reset();
+      updateOrderEstimate();
+
+      await Promise.allSettled([
+        loadProfile(),
+        loadOrders()
+      ]);
+
+    } catch (error) {
+      console.error("Order submission error:", error);
+
+      const errorText = String(error.message || "");
+
+      if (
+        errorText.toLowerCase().includes("insufficient")
+      ) {
+        message.textContent =
+          "Insufficient wallet balance. Please fund your wallet before placing this order.";
+
+      } else if (
+        errorText.toLowerCase().includes("not authenticated")
+      ) {
+        message.textContent =
+          "Your session has expired. Please log in again.";
+
+      } else if (
+        errorText.toLowerCase().includes("too long")
+      ) {
+        message.textContent =
+          "The request timed out. Please check My Orders and your wallet before submitting again, to avoid a duplicate order.";
+
+      } else {
+        message.textContent =
+          "Order could not be submitted: " + errorText;
+      }
+
+    } finally {
+      button.disabled = false;
+      button.textContent = "Submit Order";
+    }
+  });
+
+/* =========================================
+   LOAD CUSTOMER'S OWN ORDERS
+========================================= */
+
+async function loadOrders() {
+  const body = document.getElementById("ordersBody");
+  const count = document.getElementById("orderCount");
+
+  body.innerHTML =
+    "<tr><td colspan='5'>Loading orders...</td></tr>";
+
+  try {
+    const { data: orders, error } = await withTimeout(
+      supabaseClient
+        .from("orders")
+        .select("id,service_id,quantity,amount,status,created_at")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false })
+    );
+
+    if (error) throw error;
+
+    count.textContent = (orders || []).length;
+
+    if (!orders || !orders.length) {
+      body.innerHTML =
+        "<tr><td colspan='5'>You have not placed any orders yet.</td></tr>";
+      return;
+    }
+
+    const serviceNames = {};
+
+    (availableServices || []).forEach(service => {
+      serviceNames[String(service.id)] = service.name;
+    });
+
+    const serviceIds = [
+      ...new Set(
+        orders.map(order => order.service_id).filter(Boolean)
+      )
+    ];
+
+    const missingIds = serviceIds.filter(
+      id => !serviceNames[String(id)]
+    );
+
+    if (missingIds.length) {
+      const { data: services, error: serviceError } = await withTimeout(
+        supabaseClient
+          .from("services")
+          .select("id,name")
+          .in("id", missingIds)
+      );
+
+      if (serviceError) {
+        console.warn("Could not retrieve some service names:", serviceError);
+      } else {
+        (services || []).forEach(service => {
+          serviceNames[String(service.id)] = service.name;
+        });
+      }
+    }
+
+    body.innerHTML = "";
+
+    orders.forEach(order => {
+      const row = document.createElement("tr");
+
+      const date = order.created_at
+        ? new Date(order.created_at).toLocaleDateString("en-NG")
+        : "—";
+
+      const values = [
+        serviceNames[String(order.service_id)] || "Service",
+        order.quantity ?? "—",
+        formatNaira(order.amount),
+        order.status || "Pending",
+        date
       ];
 
-      values.forEach(value=>{
-        const cell=document.createElement("td");
-        cell.textContent=value;
+      values.forEach(value => {
+        const cell = document.createElement("td");
+        cell.textContent = value;
         row.appendChild(cell);
       });
 
       body.appendChild(row);
     });
 
-  }catch(error){
-    console.error("Orders error:",error);
+  } catch (error) {
+    console.error("Orders loading error:", error);
 
-    body.innerHTML=
-      "<tr><td colspan='5'>Could not load orders: "+
-      escapeHtml(error.message)+"</td></tr>";
+    count.textContent = "Unavailable";
+
+    body.innerHTML =
+      "<tr><td colspan='5'>Could not load orders: " +
+      escapeHtml(error.message) +
+      "</td></tr>";
   }
 }
 
-function escapeHtml(value){
-  return String(value).replace(/[&<>"']/g,char=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  }[char]));
-}
+/* =========================================
+   LOG OUT
+========================================= */
 
-/* LOG OUT */
-async function signOutUser(){
-  const {error}=await supabaseClient.auth.signOut();
+async function signOutUser() {
+  try {
+    const { error } = await withTimeout(
+      supabaseClient.auth.signOut()
+    );
 
-  if(error){
-    alert("Could not log out: "+error.message);
-    return;
-  }
+    if (error) throw error;
 
-  currentUser=null;
-  availableServices=[];
-  updateNavigation(null);
+    currentUser = null;
+    availableServices = [];
 
-  document.getElementById("dashboard").style.display="none";
-  document.getElementById("landingPage").style.display="block";
-  document.getElementById("siteFooter").style.display="block";
+    updateNavigation(null);
 
-  window.scrollTo(0,0);
-}
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("landingPage").style.display = "block";
+    document.getElementById("siteFooter").style.display = "block";
 
-/* RESTORE EXISTING LOGIN SESSION */
-async function checkExistingSession(){
-  const {data,error}=await supabaseClient.auth.getSession();
+    window.scrollTo(0, 0);
 
-  if(error){
-    console.error(error.message);
-    return;
-  }
-
-  if(data.session&&data.session.user){
-    currentUser=data.session.user;
-    updateNavigation(currentUser);
+  } catch (error) {
+    alert("Could not log out: " + error.message);
   }
 }
 
-supabaseClient.auth.onAuthStateChange((event,session)=>{
-  currentUser=session?.user||null;
+/* =========================================
+   RESTORE EXISTING LOGIN SESSION
+========================================= */
+
+async function checkExistingSession() {
+  try {
+    const { data, error } = await withTimeout(
+      supabaseClient.auth.getSession()
+    );
+
+    if (error) throw error;
+
+    if (data.session && data.session.user) {
+      currentUser = data.session.user;
+      updateNavigation(currentUser);
+    } else {
+      currentUser = null;
+      updateNavigation(null);
+    }
+
+  } catch (error) {
+    console.error("Session restoration error:", error);
+  }
+}
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
   updateNavigation(currentUser);
 });
 
 checkExistingSession();
+
 </script>
 
 </body>
