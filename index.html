@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -382,7 +383,7 @@ nav{width:100%;justify-content:center;flex-wrap:wrap;gap:14px}
 <tbody id="ordersBody"><tr><td colspan="5">Loading orders...</td></tr></tbody>
 </table>
 </div>
-<p style="font-size:12px;color:#aaa;margin-top:14px">Orders are submitted as pending for review. Online payments and wallet funding are not enabled yet. Your wallet balance is read-only.</p>
+<p style="font-size:12px;color:#aaa;margin-top:14px">Orders are submitted as pending for review. The order amount is deducted from your wallet after the order is accepted. Wallet funding is not enabled yet.</p>
 </div>
 </div>
 </section>
@@ -542,7 +543,7 @@ function updateNavigation(user){
   document.getElementById("userActions").classList.toggle("hidden",!signedIn);
 }
 
-/* SHOW CUSTOMER DASHBOARD - IMPROVED */
+/* SHOW CUSTOMER DASHBOARD */
 async function openDashboard(){
   if(!currentUser) return;
 
@@ -560,7 +561,6 @@ async function openDashboard(){
   document.getElementById("ordersBody").innerHTML=
     "<tr><td colspan='5'>Loading orders...</td></tr>";
 
-  // All requests run independently.
   const results=await Promise.allSettled([
     loadProfile(),
     loadServices(),
@@ -595,7 +595,7 @@ function backToHome(){
   window.scrollTo(0,0);
 }
 
-/* READ CUSTOMER PROFILE */
+/* READ CUSTOMER PROFILE AND WALLET */
 async function loadProfile(){
   const balance=document.getElementById("walletBalance");
 
@@ -615,7 +615,7 @@ async function loadProfile(){
       balance.textContent=
         "₦"+Number(data.balance||0).toLocaleString("en-NG",{minimumFractionDigits:2});
     }else{
-      balance.textContent="₦0.00";
+      balance.textContent="Profile unavailable";
     }
 
   }catch(error){
@@ -709,16 +709,17 @@ function updateOrderEstimate(){
     return;
   }
 
-  const price=Number(service.price_per_1000||0)*quantity/1000;
+  const amount=Number(service.price_per_1000)*quantity/1000;
+  const price=Math.round((amount+Number.EPSILON)*100)/100;
 
   estimate.textContent=
-    "Estimated amount: ₦"+price.toLocaleString("en-NG",{minimumFractionDigits:2});
+    "Estimated amount: ₦"+price.toLocaleString("en-NG",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
 document.getElementById("orderService").addEventListener("change",updateOrderEstimate);
 document.getElementById("orderQuantity").addEventListener("input",updateOrderEstimate);
 
-/* SUBMIT CUSTOMER ORDER */
+/* SUBMIT ORDER THROUGH SECURE DATABASE FUNCTION */
 document.getElementById("orderForm").addEventListener("submit",async function(event){
   event.preventDefault();
 
@@ -751,44 +752,60 @@ document.getElementById("orderForm").addEventListener("submit",async function(ev
     return;
   }
 
-  let validUrl;
   try{
-    validUrl=new URL(link);
+    const validUrl=new URL(link);
+
     if(!["http:","https:"].includes(validUrl.protocol)){
       throw new Error("Invalid link");
     }
-  }catch(e){
+  }catch(error){
     message.textContent="Please enter a valid https:// or http:// link.";
     return;
   }
 
-  const amount=Number(service.price_per_1000)*quantity/1000;
-
   button.disabled=true;
   button.textContent="Submitting...";
-  message.textContent="Submitting your order...";
+  message.textContent="Checking your wallet and submitting your order...";
 
   try{
-    const {error}=await supabaseClient
-      .from("orders")
-      .insert({
-        user_id:currentUser.id,
-        service_id:service.id,
-        link:link,
-        quantity:quantity,
-        amount:amount,
-        status:"pending"
-      });
+    const {data,error}=await supabaseClient.rpc("place_order",{
+      p_service_id:service.id,
+      p_link:link,
+      p_quantity:quantity
+    });
 
     if(error) throw error;
 
-    message.textContent="Your order has been submitted successfully. It is pending review.";
+    if(!data){
+      throw new Error("The server did not return an order confirmation. Please refresh your dashboard before trying again.");
+    }
+
+    message.textContent=
+      "Your order was submitted successfully. ₦"+
+      Number(data.amount||0).toLocaleString("en-NG",{minimumFractionDigits:2,maximumFractionDigits:2})+
+      " has been deducted from your wallet. Your order is pending review.";
+
     this.reset();
     updateOrderEstimate();
-    await loadOrders();
+
+    await Promise.all([
+      loadProfile(),
+      loadOrders()
+    ]);
 
   }catch(error){
-    message.textContent="Order could not be submitted: "+error.message;
+    console.error("Order submission error:",error);
+
+    const errorText=String(error.message||"");
+
+    if(errorText.toLowerCase().includes("insufficient")){
+      message.textContent="Insufficient wallet balance. Please fund your wallet before placing this order.";
+    }else if(errorText.toLowerCase().includes("not authenticated")){
+      message.textContent="Your session has expired. Please log in again.";
+    }else{
+      message.textContent="Order could not be submitted: "+errorText;
+    }
+
   }finally{
     button.disabled=false;
     button.textContent="Submit Order";
@@ -802,7 +819,6 @@ async function loadOrders(){
   body.innerHTML="<tr><td colspan='5'>Loading orders...</td></tr>";
 
   try{
-    // First fetch the customer's orders without a nested relationship.
     const {data:orders,error}=await supabaseClient
       .from("orders")
       .select("id,service_id,quantity,amount,status,created_at")
@@ -818,7 +834,6 @@ async function loadOrders(){
       return;
     }
 
-    // Then fetch the service names separately.
     const serviceIds=[...new Set(orders.map(order=>order.service_id).filter(Boolean))];
 
     let serviceNames={};
@@ -844,7 +859,7 @@ async function loadOrders(){
       const values=[
         serviceNames[String(order.service_id)]||"Service",
         order.quantity,
-        "₦"+Number(order.amount||0).toLocaleString("en-NG",{minimumFractionDigits:2}),
+        "₦"+Number(order.amount||0).toLocaleString("en-NG",{minimumFractionDigits:2,maximumFractionDigits:2}),
         order.status,
         new Date(order.created_at).toLocaleDateString("en-NG")
       ];
