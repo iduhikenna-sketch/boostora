@@ -3,1165 +3,526 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="BOOSTORA - Grow Your Influence. Expand Your Reach.">
-<title>BOOSTORA | Social Media Growth Platform</title>
-
+<title>BOOSTORA | Admin Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0"></script>
-
 <style>
-:root{--gold:#ffc700;--black:#08080a;--panel:#151617}
+:root{--gold:#ffc700;--bg:#08080a;--panel:#151617;--line:#303333;--muted:#aaa}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-background:#08080A;
-background-image:radial-gradient(circle at 70% 20%,rgba(255,199,0,.15),transparent 40%),radial-gradient(circle at 20% 80%,rgba(255,199,0,.08),transparent 30%),radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);
-background-size:auto,auto,24px 24px;
-color:white;font-family:Arial,sans-serif;line-height:1.6
-}
-a{text-decoration:none;color:inherit}
-button{font-family:inherit}
-.container{width:92%;max-width:1160px;margin:auto}
-header{background:rgba(8,8,10,.95);border-bottom:1px solid #292929;position:sticky;top:0;z-index:100}
-.nav{min-height:75px;display:flex;justify-content:space-between;align-items:center;gap:15px}
-.logo{color:var(--gold);font-size:25px;font-weight:900;letter-spacing:2px}
-nav{display:flex;gap:20px;font-size:14px}
-nav a:hover{color:var(--gold)}
-.btn{display:inline-block;background:var(--gold);color:#111;padding:12px 20px;border-radius:7px;font-weight:bold;border:1px solid var(--gold);cursor:pointer}
-.btn:disabled{opacity:.6;cursor:not-allowed}
-.btn-outline{background:transparent;color:white;border-color:#777}
-.actions{display:flex;gap:10px}
-.hero{padding:75px 0;background:radial-gradient(ellipse at top right,rgba(255,199,0,.12),transparent 60%)}
-.hero-grid{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:35px}
-.eyebrow{color:var(--gold);font-size:12px;font-weight:bold;letter-spacing:2px}
-h1{font-size:clamp(40px,5vw,64px);line-height:1.1;margin:18px 0}
+body{background:radial-gradient(circle at 80% 0%,rgba(255,199,0,.12),transparent 35%),var(--bg);color:#fff;font:15px/1.55 Arial,sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.wrap{width:94%;max-width:1200px;margin:auto}
+header{border-bottom:1px solid #292929;background:#09090bf2;position:sticky;top:0;z-index:5}
+.top{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.logo{font-size:24px;font-weight:900;letter-spacing:2px;color:var(--gold)}
+.btn{border:1px solid var(--gold);background:var(--gold);color:#111;font-weight:bold;border-radius:7px;padding:10px 15px}
+.btn.alt{background:transparent;color:#fff;border-color:#777}
+.btn.danger{background:#7c2525;border-color:#a33;color:#fff}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+main{padding:30px 0 60px}
+h1{font-size:30px;margin:4px 0}
+h2{font-size:20px;color:var(--gold);margin-bottom:15px}
+h3{font-size:16px;margin-bottom:10px}
+.muted{color:var(--muted)}
 .gold{color:var(--gold)}
-.lead{color:#ccc;font-size:17px}
-.buttons,.badges{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}
-.badges span{font-size:12px;background:#171717;border:1px solid #383838;padding:8px 11px;border-radius:30px}
-.phone-area{min-height:480px;display:grid;place-items:center;position:relative}
-.phone{width:290px;padding:24px 20px;background:linear-gradient(145deg,#222526,#101111);border:1px solid #a48639;border-radius:28px;text-align:center;position:relative;z-index:2;box-shadow:0 18px 65px #000}
-.avatar{width:58px;height:58px;border-radius:50%;margin:auto;background:var(--gold);color:#111;display:grid;place-items:center;font-size:29px;font-weight:900}
-.phone h3{margin-top:10px}
-.handle{font-size:13px;color:#ddd;display:flex;justify-content:center;align-items:center;gap:6px}
-.verified{width:17px;height:17px;object-fit:contain}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:20px 0}
-.stats div{background:#292b2b;padding:9px 2px;border-radius:8px}
-.stats strong{display:block;color:var(--gold);font-size:17px}
-.stats small{font-size:10px;color:#bbb}
-.chart{background:#242626;padding:10px;border-radius:9px}
-.chart b{font-size:12px}
-.chart svg{width:100%;height:75px;display:block}
-.chart small{font-size:10px;color:#aaa}
-.phone-note{position:absolute;right:0;bottom:35px;max-width:140px;color:#f4d66f;font-weight:bold;font-size:14px}
-.float{position:absolute;width:54px;height:54px;border-radius:16px;background:white;display:grid;place-items:center;box-shadow:0 8px 24px #0009;z-index:3;animation:floating 3s ease-in-out infinite}
-.float img{width:76%;height:76%;object-fit:contain}
-.instagram{background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5)}
-.instagram img{width:74%;height:74%}
-.tiktok{background:#050505}
-.f1{top:22px;left:4%}.f2{top:105px;right:1%}.f3{bottom:25px;left:5%}.f4{bottom:80px;right:3%}.f5{top:8px;right:22%}
-@keyframes floating{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-section{padding:75px 0;border-bottom:1px solid #252525}
-.section-heading{text-align:center;max-width:700px;margin:0 auto 38px}
-.section-heading h2,.split h2{font-size:clamp(29px,4vw,39px);line-height:1.2;margin:12px 0}
-.section-heading p{color:#bbb}
-.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:15px}
-.card{padding:21px;border:1px solid #303333;border-radius:14px;background:linear-gradient(145deg,#191b1c,#101111)}
-.card:hover{border-color:var(--gold)}
-.card h3{margin:12px 0 5px}
-.card p,.card li{font-size:13px;color:#bbb}
-.card ul{padding-left:18px}
-.card li::marker{color:var(--gold)}
-.social-logo{width:62px;height:62px;border-radius:15px;display:grid;place-items:center;overflow:hidden;background:white}
-.social-logo img{width:100%;height:100%;object-fit:contain}
-.social-logo.instagram img{width:75%;height:75%}
-.social-logo.tiktok{background:black}
-.social-logo.tiktok img{width:75%;height:75%}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center}
-.features{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.feature{padding:18px;background:var(--panel);border:1px solid #303333;border-radius:12px}
-.feature-icon{color:var(--gold);font-size:25px}
-.feature p{color:#bbb;font-size:12px;margin-top:5px}
-.pricing{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.price-card h3{color:var(--gold);font-size:21px}
-.price{font-size:30px;font-weight:bold;margin:12px 0}
-.price-card ul{min-height:130px}
-.price-card .btn{margin-top:15px}
-.featured{border-color:var(--gold)}
-.notice{margin-top:22px;padding:15px;background:#1d190e;border:1px solid #80651e;border-radius:10px;color:#e9dfc4;font-size:12px}
-.testimonials{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.quote{font-size:30px;color:var(--gold)}
-.testimonial p{color:#ccc;font-size:14px;margin:10px 0}
-.testimonial small{color:var(--gold)}
-.cta{text-align:center;background:radial-gradient(ellipse at center,#63481933,transparent 65%)}
-.cta h2{font-size:clamp(30px,4vw,42px);margin:12px 0}
-.cta p{color:#bbb;margin:15px auto 25px;max-width:650px}
-footer{padding:45px 0;color:#ccc}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:25px}
-footer h4{color:white}
-footer a{display:block;font-size:13px;margin:8px 0}
-.copyright{border-top:1px solid #333;margin-top:25px;padding-top:20px;font-size:12px}
-
-/* ACCOUNT WINDOW */
-.modal-backdrop{position:fixed;inset:0;background:#000d;z-index:500;display:none;align-items:center;justify-content:center;padding:18px}
-.modal-backdrop.show{display:flex}
-.modal{width:100%;max-width:440px;background:#151617;border:1px solid #80651e;border-radius:15px;padding:25px;position:relative;max-height:90vh;overflow:auto}
-.modal h2{color:var(--gold);margin-bottom:8px}
-.modal p{color:#bbb;font-size:13px;margin-bottom:15px}
-.close{position:absolute;right:15px;top:10px;background:none;border:0;color:white;font-size:27px;cursor:pointer}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:20px;margin:18px 0;overflow:hidden}
+.login{max-width:430px;margin:65px auto}
 .field{margin:12px 0}
-.field label{display:block;font-size:13px;color:#ddd;margin-bottom:5px}
-.field input,.field select{width:100%;padding:12px;border-radius:7px;border:1px solid #444;background:#090a0b;color:white}
-.form-msg{font-size:13px;margin:12px 0;color:var(--gold);min-height:20px;overflow-wrap:anywhere}
-.text-btn{background:none;border:0;color:var(--gold);cursor:pointer;text-decoration:underline;font-size:13px}
+label{display:block;color:#ddd;font-size:13px;margin-bottom:5px}
+input,select,textarea{width:100%;padding:11px;border-radius:7px;border:1px solid #444;background:#090a0b;color:#fff}
+textarea{min-height:75px;resize:vertical}
+.msg{min-height:22px;color:var(--gold);font-size:13px;margin:10px 0;overflow-wrap:anywhere}
 .hidden{display:none!important}
-
-/* CUSTOMER DASHBOARD */
-#dashboard{display:none;padding:55px 0;min-height:75vh}
-.dash-top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:25px}
-.dash-top h2{font-size:30px}
-.dash-top p{color:#aaa}
-.dash-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:20px 0}
-.dash-stat{background:#17191a;border:1px solid #383838;border-radius:12px;padding:20px}
-.dash-stat span{font-size:13px;color:#bbb}
-.dash-stat strong{display:block;color:var(--gold);font-size:25px;margin-top:5px;overflow-wrap:anywhere}
-.dash-columns{display:grid;grid-template-columns:1fr 1.5fr;gap:18px;margin-top:20px}
-.dash-panel{background:#151617;border:1px solid #303333;border-radius:12px;padding:20px;overflow:auto}
-.dash-panel h3{margin-bottom:15px;color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+.stat{background:#17191a;border:1px solid var(--line);border-radius:10px;padding:17px}
+.stat span{display:block;color:var(--muted);font-size:13px}
+.stat strong{display:block;color:var(--gold);font-size:25px;overflow-wrap:anywhere}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+.tab{padding:10px 15px;border:1px solid #555;background:#151617;color:#fff;border-radius:7px}
+.tab.active{background:var(--gold);border-color:var(--gold);color:#111;font-weight:bold}
 .table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:520px;font-size:13px}
-th,td{text-align:left;padding:11px;border-bottom:1px solid #333}
-th{color:var(--gold)}
-.service-list{display:grid;gap:10px}
-.service-row{padding:13px;background:#202223;border-radius:8px;display:flex;justify-content:space-between;gap:12px;align-items:center}
-.service-row small{display:block;color:#aaa}
-.service-row button{white-space:nowrap;padding:9px 12px}
-.order-form{margin-top:15px;padding-top:15px;border-top:1px solid #333}
-@media(max-width:950px){.grid{grid-template-columns:repeat(3,1fr)}.pricing,.testimonials{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:760px){
-.nav{padding:12px 0;flex-wrap:wrap;justify-content:center}
-nav{width:100%;justify-content:center;flex-wrap:wrap;gap:14px}
-.hero-grid,.split{grid-template-columns:1fr}
-.hero-copy{text-align:center}
-.buttons,.badges{justify-content:center}
-.phone-area{min-height:450px}
-.footer-grid{grid-template-columns:repeat(2,1fr)}
-.dash-columns{grid-template-columns:1fr}
-}
-@media(max-width:520px){
-.grid,.pricing,.testimonials,.features{grid-template-columns:1fr}
-.phone{width:min(290px,82vw)}
-.float{width:46px;height:46px}
-.f1,.f3{left:0}.f2,.f4{right:0}
-.phone-note{right:0;bottom:0;font-size:12px;max-width:120px}
-.footer-grid{grid-template-columns:1fr 1fr}
-.dash-cards{grid-template-columns:1fr}
-}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+th,td{text-align:left;padding:11px;border-bottom:1px solid #333;vertical-align:top}
+th{color:var(--gold);white-space:nowrap}
+td select{min-width:130px;padding:7px}
+td .btn{padding:7px 10px;font-size:12px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 15px}
+.inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{display:inline-block;padding:3px 8px;border-radius:20px;background:#292929;color:#f2d56a;font-size:11px}
+#app{display:none}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.top{padding:12px 0}}
+@media(max-width:420px){.stats{grid-template-columns:1fr 1fr}.panel{padding:14px}}
 </style>
 </head>
-
 <body>
-
-<header id="siteHeader">
-<div class="container nav">
-<a href="#home" class="logo">BOOSTORA</a>
-<nav>
-<a href="#home">Home</a>
-<a href="#services">Services</a>
-<a href="#pricing">Pricing</a>
-<a href="#about">About</a>
-<a href="#contact">Contact</a>
-</nav>
-<div class="actions" id="guestActions">
-<button class="btn btn-outline" onclick="openAuth('login')">Log In</button>
-<button class="btn" onclick="openAuth('signup')">Get Started</button>
-</div>
-<div class="actions hidden" id="userActions">
-<button class="btn btn-outline" onclick="showDashboard()">My Dashboard</button>
-<button class="btn" onclick="signOutUser()">Log Out</button>
+<header>
+<div class="wrap top">
+<a class="logo" href="./">BOOSTORA</a>
+<div class="inline">
+<small id="signedInAs">Secure administrator access</small>
+<button class="btn alt hidden" id="logoutBtn" type="button">Log Out</button>
 </div>
 </div>
 </header>
 
-<main id="landingPage">
-
-<section class="hero" id="home">
-<div class="container hero-grid">
-<div class="hero-copy">
-<span class="eyebrow">SOCIAL MEDIA GROWTH PLATFORM</span>
-<h1>Grow Your Influence.<br><span class="gold">Expand Your Reach.</span></h1>
-<p class="lead">Build a stronger online presence with authentic promotion, audience discovery and clear campaign insights. BOOSTORA helps creators and businesses put their content in front of more people.</p>
-<div class="buttons">
-<button class="btn" onclick="openAuth('signup')">Get Started Now →</button>
-<a href="#how" class="btn btn-outline">▶ Watch How It Works</a>
+<main class="wrap">
+<section id="loginPanel" class="panel login">
+<p class="gold">BOOSTORA CONTROL CENTRE</p>
+<h1>Admin Login</h1>
+<p class="muted">Sign in with your administrator account.</p>
+<form id="loginForm">
+<div class="field">
+<label for="email">Email address</label>
+<input id="email" type="email" autocomplete="username" required>
 </div>
-<div class="badges">
-<span>✓ Real Engagement</span><span>✓ Safe &amp; Secure</span><span>✓ Fast Delivery</span><span>✓ 24/7 Support</span>
+<div class="field">
+<label for="password">Password</label>
+<input id="password" type="password" autocomplete="current-password" required>
 </div>
-</div>
-
-<div class="phone-area">
-<div class="float instagram f1"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"></div>
-<div class="float tiktok f2"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Tiktok_icon.svg" alt="TikTok"></div>
-<div class="float f3"><img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube"></div>
-<div class="float f4"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"></div>
-<div class="float f5"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X"></div>
-
-<div class="phone">
-<div class="avatar">B</div>
-<h3>Your Brand</h3>
-<div class="handle">@yourbrand
-<img class="verified" src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" alt="Decorative badge">
-</div>
-<div class="stats">
-<div><strong>125K</strong><small>Followers</small></div>
-<div><strong>2.4M</strong><small>Likes</small></div>
-<div><strong>1.8M</strong><small>Views</small></div>
-</div>
-<div class="chart">
-<b>Your Growth Journey</b>
-<svg viewBox="0 0 240 75">
-<defs>
-<filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
-<feGaussianBlur stdDeviation="3" result="blur"/>
-<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-</filter>
-</defs>
-<path d="M 8 62 L 42 43 L 72 51 L 105 30 L 137 38 L 174 16 L 211 7" stroke="#FFC700" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#goldGlow)"/>
-<polygon points="211,7 193,10 205,22" fill="#FFC700" filter="url(#goldGlow)"/>
-</svg>
-<small>Illustrative growth preview</small>
-</div>
-</div>
-<div class="phone-note">More Followers.<br>More Opportunities.</div>
-</div>
-</div>
+<button class="btn" id="loginBtn" type="submit">Log In</button>
+<p class="msg" id="loginMsg" role="status"></p>
+</form>
 </section>
 
-<section id="services">
-<div class="container">
-<div class="section-heading">
-<span class="eyebrow">WHAT WE OFFER</span>
-<h2>Our Social Media <span class="gold">Services</span></h2>
-<p>Promotion and campaign support across the platforms you use every day.</p>
-</div>
-<div class="grid">
-<div class="card">
-<div class="social-logo instagram"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"></div>
-<h3>Instagram</h3><p>Build a stronger Instagram presence.</p>
-<ul><li>Profile promotion</li><li>Reel promotion</li><li>Audience discovery</li><li>Engagement campaigns</li></ul>
-</div>
-<div class="card">
-<div class="social-logo tiktok"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Tiktok_icon.svg" alt="TikTok"></div>
-<h3>TikTok</h3><p>Give your videos more opportunities to be discovered.</p>
-<ul><li>Video promotion</li><li>Creator partnerships</li><li>Content campaigns</li><li>Performance insights</li></ul>
-</div>
-<div class="card">
-<div class="social-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube"></div>
-<h3>YouTube</h3><p>Help your videos and channel reach interested viewers.</p>
-<ul><li>Video advertising</li><li>Channel discovery</li><li>Content promotion</li><li>Campaign reporting</li></ul>
-</div>
-<div class="card">
-<div class="social-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"></div>
-<h3>Facebook</h3><p>Promote your business and community.</p>
-<ul><li>Page promotion</li><li>Post campaigns</li><li>Audience targeting</li><li>Brand awareness</li></ul>
-</div>
-<div class="card">
-<div class="social-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X"></div>
-<h3>X</h3><p>Expand the reach of your ideas and brand.</p>
-<ul><li>Post promotion</li><li>Audience discovery</li><li>Brand campaigns</li><li>Performance insights</li></ul>
-</div>
-</div>
-</div>
-</section>
-
-<section id="about">
-<div class="container split">
+<section id="app">
+<div class="inline" style="justify-content:space-between">
 <div>
-<span class="eyebrow">WHY CHOOSE BOOSTORA</span>
-<h2>Your Success Is <span class="gold">Our Priority.</span></h2>
-<p class="lead">We believe social media growth should be built on real people, meaningful engagement and transparent promotion. Our goal is to help creators and businesses build lasting online visibility.</p>
-<br><a href="#pricing" class="btn">Explore Our Plans →</a>
+<p class="gold">ADMINISTRATION</p>
+<h1>Dashboard</h1>
+<p class="muted">Manage BOOSTORA orders, services and customer accounts.</p>
 </div>
-<div class="features">
-<div class="feature"><div class="feature-icon">✓</div><b>Authentic Engagement</b><p>Focus on real audiences and genuine interactions.</p></div>
-<div class="feature"><div class="feature-icon">⚡</div><b>Campaign Support</b><p>Organized campaign planning and progress updates.</p></div>
-<div class="feature"><div class="feature-icon">▥</div><b>Clear Analytics</b><p>Understand reach, clicks and available results.</p></div>
-<div class="feature"><div class="feature-icon">🔒</div><b>Safe &amp; Secure</b><p>Never share your social media password with us.</p></div>
-<div class="feature"><div class="feature-icon">₦</div><b>Flexible Budgets</b><p>Campaign options for different business needs.</p></div>
-<div class="feature"><div class="feature-icon">24/7</div><b>Customer Support</b><p>Get help with campaign questions and updates.</p></div>
+<a class="btn alt" href="./">View Website</a>
 </div>
+
+<div class="stats">
+<div class="stat"><span>Total Orders</span><strong id="totalOrders">—</strong></div>
+<div class="stat"><span>Pending Orders</span><strong id="pendingOrders">—</strong></div>
+<div class="stat"><span>Active Services</span><strong id="activeServices">—</strong></div>
+<div class="stat"><span>Customers</span><strong id="totalCustomers">—</strong></div>
+</div>
+
+<div class="tabs">
+<button class="tab active" data-tab="orders">Orders</button>
+<button class="tab" data-tab="services">Services</button>
+<button class="tab" data-tab="customers">Customers</button>
+</div>
+
+<section class="panel" id="ordersTab">
+<div class="inline" style="justify-content:space-between">
+<h2>All Orders</h2>
+<button class="btn alt" id="refreshOrders" type="button">Refresh</button>
+</div>
+<p class="msg" id="ordersMsg"></p>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Created</th><th>Customer</th><th>Service</th><th>Link</th><th>Qty</th><th>Amount</th><th>Status</th><th>Save</th></tr>
+</thead>
+<tbody id="ordersBody"><tr><td colspan="8">Loading orders…</td></tr></tbody>
+</table>
 </div>
 </section>
 
-<section id="pricing">
-<div class="container">
-<div class="section-heading">
-<span class="eyebrow">OUR PACKAGES</span>
-<h2>Simple &amp; Flexible <span class="gold">Pricing</span></h2>
-<p>Choose a starting campaign package that matches your goals.</p>
+<section class="panel hidden" id="servicesTab">
+<div class="inline" style="justify-content:space-between">
+<h2>Manage Services</h2>
+<button class="btn alt" id="refreshServices" type="button">Refresh</button>
 </div>
-<div class="pricing">
-<div class="card price-card"><h3>Basic</h3><p>For individuals getting started.</p><div class="price">₦5,000</div><ul><li>Campaign consultation</li><li>One promotion plan</li><li>Audience recommendations</li><li>Basic campaign summary</li></ul><button class="btn" onclick="openAuth('signup')">Choose Basic</button></div>
-<div class="card price-card featured"><h3>Standard</h3><p>For growing creators and brands.</p><div class="price">₦10,000</div><ul><li>Campaign planning</li><li>Promotion recommendations</li><li>Audience targeting guidance</li><li>Performance report</li></ul><button class="btn" onclick="openAuth('signup')">Choose Standard</button></div>
-<div class="card price-card"><h3>Premium</h3><p>For businesses with bigger goals.</p><div class="price">₦20,000</div><ul><li>Extended campaign planning</li><li>Multiple promotion activities</li><li>Creator partnership planning</li><li>Detailed campaign report</li></ul><button class="btn" onclick="openAuth('signup')">Choose Premium</button></div>
-<div class="card price-card"><h3>Custom Plan</h3><p>For a campaign built around your needs.</p><div class="price">Let's Talk</div><ul><li>Personalized campaign scope</li><li>Flexible budget</li><li>Tailored recommendations</li><li>Agreed reporting plan</li></ul><a href="#contact" class="btn">Request a Plan</a></div>
+<p class="muted">Add a service or edit an existing one. Deactivated services are hidden from customers.</p>
+
+<form id="serviceForm">
+<input type="hidden" id="serviceId">
+<div class="form-grid">
+<div class="field"><label for="serviceName">Service name</label><input id="serviceName" required maxlength="120"></div>
+<div class="field"><label for="servicePlatform">Platform</label><input id="servicePlatform" placeholder="TikTok, Instagram, YouTube…" required></div>
+<div class="field"><label for="serviceType">Service type</label><input id="serviceType" placeholder="Followers, Likes, Views…" required></div>
+<div class="field"><label for="servicePrice">Price per 1,000 (₦)</label><input id="servicePrice" type="number" min="0" step="0.01" required></div>
+<div class="field"><label for="serviceMin">Minimum quantity</label><input id="serviceMin" type="number" min="1" step="1" value="100" required></div>
+<div class="field"><label for="serviceMax">Maximum quantity</label><input id="serviceMax" type="number" min="1" step="1" value="10000" required></div>
 </div>
-<div class="notice">Prices are indicative starting prices for campaign planning and promotion services. They do not guarantee a specific number of followers, likes, views or subscribers. Final deliverables and costs must be confirmed before an order or payment is accepted.</div>
+<div class="field"><label for="serviceDescription">Description (optional)</label><textarea id="serviceDescription"></textarea></div>
+<div class="inline">
+<label class="inline"><input id="serviceActive" type="checkbox" checked style="width:auto"> Active and visible to customers</label>
+</div>
+<div class="inline" style="margin-top:12px">
+<button class="btn" id="saveServiceBtn" type="submit">Add Service</button>
+<button class="btn alt" id="cancelEditBtn" type="button">Clear Form</button>
+</div>
+<p class="msg" id="serviceMsg" role="status"></p>
+</form>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Service</th><th>Platform / Type</th><th>Price per 1,000</th><th>Min–Max</th><th>Status</th><th>Action</th></tr></thead>
+<tbody id="servicesBody"><tr><td colspan="6">Loading services…</td></tr></tbody>
+</table>
 </div>
 </section>
 
-<section id="testimonials">
-<div class="container">
-<div class="section-heading">
-<span class="eyebrow">CUSTOMER EXPERIENCES</span>
-<h2>What Our Customers <span class="gold">Say</span></h2>
-<p>Genuine customer feedback will appear here as BOOSTORA completes its first campaigns.</p>
+<section class="panel hidden" id="customersTab">
+<div class="inline" style="justify-content:space-between">
+<h2>Customer Accounts</h2>
+<button class="btn alt" id="refreshCustomers" type="button">Refresh</button>
 </div>
-<div class="testimonials">
-<div class="card testimonial"><div class="quote">“</div><p>A space for a real customer's experience with BOOSTORA.</p><b>Customer review</b><br><small>Awaiting first verified review</small></div>
-<div class="card testimonial"><div class="quote">“</div><p>A space for genuine feedback from a creator or business owner.</p><b>Customer review</b><br><small>Awaiting first verified review</small></div>
-<div class="card testimonial"><div class="quote">“</div><p>A space to share a real campaign experience and its results.</p><b>Customer review</b><br><small>Awaiting first verified review</small></div>
-<div class="card testimonial"><div class="quote">“</div><p>A space for another authentic customer story when available.</p><b>Customer review</b><br><small>Awaiting first verified review</small></div>
-</div>
-</div>
-</section>
-
-<section class="cta" id="how">
-<div class="container">
-<span class="eyebrow">A SIMPLE, TRANSPARENT PROCESS</span>
-<h2>Ready to grow with <span class="gold">BOOSTORA?</span></h2>
-<p>Choose your goal, plan your campaign and follow its progress with clear updates.</p>
-<button class="btn" onclick="openAuth('signup')">Get Started →</button>
+<p class="muted">Customer balances are read-only here. Wallet adjustments should only be made through a trusted, audited server-side process.</p>
+<p class="msg" id="customersMsg"></p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Customer</th><th>Email</th><th>Wallet Balance</th><th>Joined</th></tr></thead>
+<tbody id="customersBody"><tr><td colspan="4">Loading customers…</td></tr></tbody>
+</table>
 </div>
 </section>
-
-<section class="cta" id="contact">
-<div class="container">
-<span class="eyebrow">YOUR NEXT CHAPTER STARTS HERE</span>
-<h2>Let's build your <span class="gold">online presence.</span></h2>
-<p>Contact BOOSTORA to discuss a campaign for your brand.</p>
-<a href="mailto:hello@boostora.example?subject=BOOSTORA%20Enquiry" class="btn">Contact BOOSTORA →</a>
-</div>
+<p class="msg" id="globalMsg" role="status"></p>
 </section>
 </main>
 
-<!-- CUSTOMER DASHBOARD -->
-<section id="dashboard" class="container">
-<div class="dash-top">
-<div><span class="eyebrow">CUSTOMER ACCOUNT</span><h2>Welcome, <span class="gold" id="welcomeName">Customer</span></h2><p id="accountEmail"></p></div>
-<button class="btn btn-outline" onclick="backToHome()">Back to Website</button>
-</div>
-
-<div class="dash-cards">
-<div class="dash-stat"><span>Wallet Balance</span><strong id="walletBalance">Loading...</strong></div>
-<div class="dash-stat"><span>Total Orders</span><strong id="orderCount">Loading...</strong></div>
-<div class="dash-stat"><span>Account Status</span><strong style="font-size:20px">Active</strong></div>
-</div>
-
-<div class="dash-columns">
-<div class="dash-panel">
-<h3>Available Services</h3>
-<div id="serviceList" class="service-list">Loading services...</div>
-<div class="order-form">
-<h3>Place an Order</h3>
-<form id="orderForm">
-<div class="field"><label for="orderService">Select service</label><select id="orderService" required><option value="">Choose a service</option></select></div>
-<div class="field"><label for="orderLink">Profile / post / video link</label><input id="orderLink" type="url" placeholder="https://..." required></div>
-<div class="field"><label for="orderQuantity">Quantity</label><input id="orderQuantity" type="number" min="1" step="1" required></div>
-<p id="orderEstimate" class="form-msg">Choose a service and quantity to see the estimate.</p>
-<button class="btn" type="submit">Submit Order</button>
-<div id="orderMessage" class="form-msg" role="status"></div>
-</form>
-</div>
-</div>
-
-<div class="dash-panel">
-<h3>My Orders</h3>
-<div class="table-wrap">
-<table>
-<thead><tr><th>Service</th><th>Quantity</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
-<tbody id="ordersBody"><tr><td colspan="5">Loading orders...</td></tr></tbody>
-</table>
-</div>
-<p style="font-size:12px;color:#aaa;margin-top:14px">Orders are submitted as pending for review. The order amount is deducted from your wallet when the order is submitted successfully. Wallet funding is not enabled yet.</p>
-</div>
-</div>
-</section>
-
-<footer id="siteFooter">
-<div class="container">
-<div class="footer-grid">
-<div><a href="#home" class="logo">BOOSTORA</a><p>Grow Your Influence. Expand Your Reach.<br>Authentic social media promotion for creators and businesses.</p></div>
-<div><h4>Explore</h4><a href="#home">Home</a><a href="#services">Services</a><a href="#about">About</a><a href="#pricing">Pricing</a></div>
-<div><h4>Company</h4><a href="#how">How It Works</a><a href="#testimonials">Customer Reviews</a><a href="#contact">Contact</a></div>
-<div><h4>Platforms</h4><a href="#services">Instagram</a><a href="#services">TikTok</a><a href="#services">YouTube</a><a href="#services">Facebook &amp; X</a></div>
-</div>
-<div class="copyright">© 2026 BOOSTORA. All rights reserved.</div>
-</div>
-</footer>
-
-<!-- LOGIN / REGISTRATION POPUP -->
-<div class="modal-backdrop" id="authBackdrop" onclick="if(event.target===this)closeAuth()">
-<div class="modal">
-<button class="close" onclick="closeAuth()" aria-label="Close">&times;</button>
-<h2 id="authTitle">Create your account</h2>
-<p id="authIntro">Register to access your BOOSTORA customer dashboard.</p>
-<form id="authForm">
-<div class="field" id="nameField"><label for="fullName">Full name</label><input id="fullName" type="text" autocomplete="name" placeholder="Your full name"></div>
-<div class="field"><label for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div>
-<div class="field"><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="At least 6 characters"></div>
-<button class="btn" id="authSubmit" type="submit" style="width:100%">Create Account</button>
-<div class="form-msg" id="authMessage" role="status"></div>
-</form>
-<p><span id="switchText">Already have an account?</span> <button class="text-btn" id="switchAuth" onclick="switchAuthMode()">Log in</button></p>
-</div>
-</div>
-
 <script>
-/* =========================================
-   BOOSTORA SUPABASE CONNECTION
-========================================= */
-
 const SUPABASE_URL = "https://zjtmdapnbypftvrlfuue.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_SMrC3NQlEKey0D9igmu4Yw_6zzzZBYN";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
 
-if (!window.supabase) {
-  document.body.insertAdjacentHTML(
-    "afterbegin",
-    '<div style="background:#500;color:white;padding:15px;text-align:center">BOOSTORA could not load its connection library. Please refresh the page.</div>'
-  );
-  throw new Error("Supabase library failed to load.");
-}
+let adminUser = null;
+let cachedServices = [];
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
-    }
+const $ = id => document.getElementById(id);
+const money = value => "₦" + Number(value || 0).toLocaleString("en-NG",{minimumFractionDigits:2,maximumFractionDigits:2});
+const safe = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const dateText = value => value ? new Date(value).toLocaleString("en-NG") : "—";
+function message(id,text){$(id).textContent=text||"";}
+
+async function requireAdmin(user){
+  if(!user || user.app_metadata?.role !== "admin"){
+    adminUser=null;
+    $("loginPanel").classList.remove("hidden");
+    $("app").style.display="none";
+    $("logoutBtn").classList.add("hidden");
+    message("loginMsg","This account does not have the administrator role. Sign in with the approved admin account.");
+    return false;
   }
-);
 
-let authMode = "signup";
-let currentUser = null;
-let availableServices = [];
-
-/* =========================================
-   GENERAL HELPERS
-========================================= */
-
-function withTimeout(promise, milliseconds = 15000) {
-  let timer;
-
-  const timeout = new Promise((resolve, reject) => {
-    timer = setTimeout(() => {
-      reject(new Error("The request took too long. Please check your connection and try again."));
-    }, milliseconds);
-  });
-
-  return Promise.race([promise, timeout]).finally(() => {
-    clearTimeout(timer);
-  });
+  adminUser=user;
+  $("loginPanel").classList.add("hidden");
+  $("app").style.display="block";
+  $("logoutBtn").classList.remove("hidden");
+  $("signedInAs").textContent="Signed in: "+(user.email||"Administrator");
+  await refreshAll();
+  return true;
 }
 
-function formatNaira(value) {
-  const amount = Number(value);
+$("loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const btn=$("loginBtn");
+  btn.disabled=true;
+  btn.textContent="Signing in…";
+  message("loginMsg","Checking your account...");
 
-  if (!Number.isFinite(amount)) return "₦0.00";
+  try{
+    const {data,error}=await db.auth.signInWithPassword({
+      email:$("email").value.trim(),
+      password:$("password").value
+    });
 
-  return "₦" + amount.toLocaleString("en-NG", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
-}
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
-}
-
-function showMessage(element, message) {
-  if (element) element.textContent = message;
-}
-
-/* =========================================
-   LOGIN / REGISTRATION WINDOW
-========================================= */
-
-function openAuth(mode = "signup") {
-  authMode = mode;
-  updateAuthForm();
-
-  document.getElementById("authMessage").textContent = "";
-  document.getElementById("authBackdrop").classList.add("show");
-}
-
-function closeAuth() {
-  document.getElementById("authBackdrop").classList.remove("show");
-}
-
-function switchAuthMode() {
-  authMode = authMode === "signup" ? "login" : "signup";
-  updateAuthForm();
-
-  document.getElementById("authMessage").textContent = "";
-}
-
-function updateAuthForm() {
-  const signup = authMode === "signup";
-
-  document.getElementById("authTitle").textContent =
-    signup ? "Create your account" : "Welcome back";
-
-  document.getElementById("authIntro").textContent =
-    signup
-      ? "Register to access your BOOSTORA customer dashboard."
-      : "Log in to manage your BOOSTORA orders.";
-
-  document.getElementById("nameField").classList.toggle("hidden", !signup);
-  document.getElementById("fullName").required = signup;
-
-  document.getElementById("authPassword").autocomplete =
-    signup ? "new-password" : "current-password";
-
-  document.getElementById("authSubmit").textContent =
-    signup ? "Create Account" : "Log In";
-
-  document.getElementById("switchText").textContent =
-    signup ? "Already have an account?" : "Don't have an account?";
-
-  document.getElementById("switchAuth").textContent =
-    signup ? "Log in" : "Create account";
-}
-
-/* =========================================
-   REGISTER AND LOGIN
-========================================= */
-
-document.getElementById("authForm").addEventListener("submit", async function(event) {
-  event.preventDefault();
-
-  const message = document.getElementById("authMessage");
-  const button = document.getElementById("authSubmit");
-
-  const email = document.getElementById("authEmail").value.trim();
-  const password = document.getElementById("authPassword").value;
-  const fullName = document.getElementById("fullName").value.trim();
-
-  button.disabled = true;
-  button.textContent = "Please wait...";
-  message.textContent = "Connecting securely...";
-
-  try {
-    if (authMode === "signup") {
-      if (!fullName) {
-        throw new Error("Please enter your full name.");
-      }
-
-      const { data, error } = await withTimeout(
-        supabaseClient.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { full_name: fullName }
-          }
-        })
-      );
-
-      if (error) throw error;
-
-      if (data.session && data.user) {
-        currentUser = data.user;
-        closeAuth();
-        await openDashboard();
-      } else {
-        message.textContent =
-          "Registration received. Please check your email and confirm your account before logging in.";
-      }
-
-    } else {
-      const { data, error } = await withTimeout(
-        supabaseClient.auth.signInWithPassword({
-          email,
-          password
-        })
-      );
-
-      if (error) throw error;
-
-      currentUser = data.user;
-      closeAuth();
-      await openDashboard();
-    }
-
-  } catch (error) {
-    console.error("Authentication error:", error);
-
-    message.textContent =
-      error.message || "Something went wrong. Please try again.";
-
-  } finally {
-    button.disabled = false;
-    button.textContent =
-      authMode === "signup" ? "Create Account" : "Log In";
+    if(error) throw error;
+    await requireAdmin(data.user);
+  }catch(err){
+    message("loginMsg",err.message||"Login failed.");
+  }finally{
+    btn.disabled=false;
+    btn.textContent="Log In";
   }
 });
 
-/* =========================================
-   NAVIGATION
-========================================= */
+$("logoutBtn").addEventListener("click",async()=>{
+  const {error}=await db.auth.signOut();
 
-function updateNavigation(user) {
-  const signedIn = !!user;
-
-  document.getElementById("guestActions")
-    .classList.toggle("hidden", signedIn);
-
-  document.getElementById("userActions")
-    .classList.toggle("hidden", !signedIn);
-}
-
-/* =========================================
-   OPEN CUSTOMER DASHBOARD
-========================================= */
-
-async function openDashboard() {
-  if (!currentUser) return;
-
-  document.getElementById("landingPage").style.display = "none";
-  document.getElementById("siteFooter").style.display = "none";
-  document.getElementById("dashboard").style.display = "block";
-
-  updateNavigation(currentUser);
-
-  document.getElementById("accountEmail").textContent =
-    currentUser.email || "";
-
-  document.getElementById("welcomeName").textContent =
-    currentUser.user_metadata?.full_name || "Customer";
-
-  document.getElementById("walletBalance").textContent = "Loading...";
-  document.getElementById("orderCount").textContent = "Loading...";
-  document.getElementById("serviceList").textContent = "Loading services...";
-
-  document.getElementById("ordersBody").innerHTML =
-    "<tr><td colspan='5'>Loading orders...</td></tr>";
-
-  document.getElementById("orderMessage").textContent = "";
-
-  const results = await Promise.allSettled([
-    loadProfile(),
-    loadServices(),
-    loadOrders()
-  ]);
-
-  results.forEach((result, index) => {
-    if (result.status === "rejected") {
-      console.error("Dashboard request failed:", index, result.reason);
-    }
-  });
-
-  window.scrollTo(0, 0);
-}
-
-async function showDashboard() {
-  try {
-    const { data, error } = await withTimeout(
-      supabaseClient.auth.getUser()
-    );
-
-    if (error || !data.user) {
-      openAuth("login");
-      return;
-    }
-
-    currentUser = data.user;
-    await openDashboard();
-
-  } catch (error) {
-    console.error("Session check error:", error);
-    openAuth("login");
-  }
-}
-
-function backToHome() {
-  document.getElementById("dashboard").style.display = "none";
-  document.getElementById("landingPage").style.display = "block";
-  document.getElementById("siteFooter").style.display = "block";
-
-  window.scrollTo(0, 0);
-}
-
-/* =========================================
-   LOAD CUSTOMER PROFILE AND WALLET
-========================================= */
-
-async function loadProfile() {
-  const balance = document.getElementById("walletBalance");
-
-  try {
-    const { data, error } = await withTimeout(
-      supabaseClient
-        .from("profiles")
-        .select("full_name,balance")
-        .eq("id", currentUser.id)
-        .maybeSingle()
-    );
-
-    if (error) throw error;
-
-    if (!data) {
-      balance.textContent = "Profile unavailable";
-      console.error("No profile row found for:", currentUser.id);
-      return;
-    }
-
-    document.getElementById("welcomeName").textContent =
-      data.full_name ||
-      currentUser.user_metadata?.full_name ||
-      "Customer";
-
-    balance.textContent = formatNaira(data.balance);
-
-  } catch (error) {
-    console.error("Profile loading error:", error);
-    balance.textContent = "Unavailable";
-  }
-}
-
-/* =========================================
-   LOAD ACTIVE SERVICES
-========================================= */
-
-async function loadServices() {
-  const list = document.getElementById("serviceList");
-  const select = document.getElementById("orderService");
-
-  list.textContent = "Loading services...";
-  select.innerHTML = '<option value="">Choose a service</option>';
-
-  try {
-    const { data, error } = await withTimeout(
-      supabaseClient
-        .from("services")
-        .select("id,name,platform,type,price_per_1000,min_order,max_order,description,is_active")
-        .eq("is_active", true)
-        .order("name")
-    );
-
-    if (error) throw error;
-
-    availableServices = data || [];
-
-    if (!availableServices.length) {
-      list.textContent =
-        "No active services found. Please check your services table and permissions.";
-      return;
-    }
-
-    list.innerHTML = "";
-
-    availableServices.forEach(service => {
-      const price = Number(service.price_per_1000 || 0);
-
-      const row = document.createElement("div");
-      row.className = "service-row";
-
-      const info = document.createElement("div");
-
-      const name = document.createElement("b");
-      name.textContent = service.name || "Unnamed service";
-
-      const detail = document.createElement("small");
-      detail.textContent =
-        (service.platform || "Social Media") +
-        " · " + formatNaira(price) + " per 1,000";
-
-      info.appendChild(name);
-      info.appendChild(detail);
-
-      const choose = document.createElement("button");
-      choose.className = "btn";
-      choose.textContent = "Select";
-      choose.type = "button";
-
-      choose.addEventListener("click", () => {
-        select.value = service.id;
-        updateOrderEstimate();
-
-        document.getElementById("orderForm")
-          .scrollIntoView({ behavior: "smooth" });
-      });
-
-      row.appendChild(info);
-      row.appendChild(choose);
-      list.appendChild(row);
-
-      const option = document.createElement("option");
-      option.value = service.id;
-      option.textContent = service.name;
-
-      select.appendChild(option);
-    });
-
-  } catch (error) {
-    console.error("Services loading error:", error);
-
-    availableServices = [];
-
-    list.textContent =
-      "Could not load services: " + error.message;
-  }
-}
-
-/* =========================================
-   ORDER PRICE ESTIMATE
-========================================= */
-
-function updateOrderEstimate() {
-  const service = availableServices.find(
-    item =>
-      String(item.id) ===
-      String(document.getElementById("orderService").value)
-  );
-
-  const quantity = Number(
-    document.getElementById("orderQuantity").value
-  );
-
-  const estimate = document.getElementById("orderEstimate");
-
-  if (!service || !quantity || quantity < 1) {
-    estimate.textContent =
-      "Choose a service and quantity to see the estimate.";
+  if(error){
+    message("globalMsg",error.message);
     return;
   }
 
-  const amount =
-    Number(service.price_per_1000) * quantity / 1000;
-
-  const price = Math.round((amount + Number.EPSILON) * 100) / 100;
-
-  estimate.textContent =
-    "Estimated amount: " + formatNaira(price);
-}
-
-document.getElementById("orderService")
-  .addEventListener("change", updateOrderEstimate);
-
-document.getElementById("orderQuantity")
-  .addEventListener("input", updateOrderEstimate);
-
-/* =========================================
-   SUBMIT ORDER THROUGH SECURE DATABASE FUNCTION
-========================================= */
-
-document.getElementById("orderForm")
-  .addEventListener("submit", async function(event) {
-    event.preventDefault();
-
-    const message = document.getElementById("orderMessage");
-    const button = this.querySelector("button[type='submit']");
-
-    const service = availableServices.find(
-      item =>
-        String(item.id) ===
-        String(document.getElementById("orderService").value)
-    );
-
-    const link = document.getElementById("orderLink").value.trim();
-    const quantity = Number(
-      document.getElementById("orderQuantity").value
-    );
-
-    if (!currentUser) {
-      message.textContent = "Please log in first.";
-      return;
-    }
-
-    if (!service) {
-      message.textContent = "Please select a valid service.";
-      return;
-    }
-
-    const minimum = Number(service.min_order) || 1;
-    const maximum = Number(service.max_order) || 1000000;
-
-    if (
-      !Number.isInteger(quantity) ||
-      quantity < minimum ||
-      quantity > maximum
-    ) {
-      message.textContent =
-        "Quantity must be between " + minimum + " and " + maximum + ".";
-      return;
-    }
-
-    try {
-      const validUrl = new URL(link);
-
-      if (!["http:", "https:"].includes(validUrl.protocol)) {
-        throw new Error("Invalid link");
-      }
-
-    } catch (error) {
-      message.textContent =
-        "Please enter a valid https:// or http:// link.";
-      return;
-    }
-
-    button.disabled = true;
-    button.textContent = "Submitting...";
-    message.textContent =
-      "Checking your wallet and submitting your order...";
-
-    try {
-      const { data, error } = await withTimeout(
-        supabaseClient.rpc("place_order", {
-          p_service_id: service.id,
-          p_link: link,
-          p_quantity: quantity
-        }),
-        20000
-      );
-
-      if (error) throw error;
-
-      if (!data) {
-        throw new Error(
-          "The server did not return an order confirmation. Refresh your dashboard and check your orders and wallet before trying again."
-        );
-      }
-
-      const result = Array.isArray(data) ? data[0] : data;
-
-      if (result && result.success === false) {
-        throw new Error(result.message || "The order was not accepted.");
-      }
-
-      const chargedAmount =
-        result?.amount ??
-        result?.total_amount ??
-        result?.order_amount ??
-        0;
-
-      message.textContent =
-        "Your order was submitted successfully. " +
-        formatNaira(chargedAmount) +
-        " has been deducted from your wallet. Your order is pending review.";
-
-      this.reset();
-      updateOrderEstimate();
-
-      await Promise.allSettled([
-        loadProfile(),
-        loadOrders()
-      ]);
-
-    } catch (error) {
-      console.error("Order submission error:", error);
-
-      const errorText = String(error.message || "");
-
-      if (
-        errorText.toLowerCase().includes("insufficient")
-      ) {
-        message.textContent =
-          "Insufficient wallet balance. Please fund your wallet before placing this order.";
-
-      } else if (
-        errorText.toLowerCase().includes("not authenticated")
-      ) {
-        message.textContent =
-          "Your session has expired. Please log in again.";
-
-      } else if (
-        errorText.toLowerCase().includes("too long")
-      ) {
-        message.textContent =
-          "The request timed out. Please check My Orders and your wallet before submitting again, to avoid a duplicate order.";
-
-      } else {
-        message.textContent =
-          "Order could not be submitted: " + errorText;
-      }
-
-    } finally {
-      button.disabled = false;
-      button.textContent = "Submit Order";
-    }
-  });
-
-/* =========================================
-   LOAD CUSTOMER'S OWN ORDERS
-========================================= */
-
-async function loadOrders() {
-  const body = document.getElementById("ordersBody");
-  const count = document.getElementById("orderCount");
-
-  body.innerHTML =
-    "<tr><td colspan='5'>Loading orders...</td></tr>";
-
-  try {
-    const { data: orders, error } = await withTimeout(
-      supabaseClient
-        .from("orders")
-        .select("id,service_id,quantity,amount,status,created_at")
-        .eq("user_id", currentUser.id)
-        .order("created_at", { ascending: false })
-    );
-
-    if (error) throw error;
-
-    count.textContent = (orders || []).length;
-
-    if (!orders || !orders.length) {
-      body.innerHTML =
-        "<tr><td colspan='5'>You have not placed any orders yet.</td></tr>";
-      return;
-    }
-
-    const serviceNames = {};
-
-    (availableServices || []).forEach(service => {
-      serviceNames[String(service.id)] = service.name;
-    });
-
-    const serviceIds = [
-      ...new Set(
-        orders.map(order => order.service_id).filter(Boolean)
-      )
-    ];
-
-    const missingIds = serviceIds.filter(
-      id => !serviceNames[String(id)]
-    );
-
-    if (missingIds.length) {
-      const { data: services, error: serviceError } = await withTimeout(
-        supabaseClient
-          .from("services")
-          .select("id,name")
-          .in("id", missingIds)
-      );
-
-      if (serviceError) {
-        console.warn("Could not retrieve some service names:", serviceError);
-      } else {
-        (services || []).forEach(service => {
-          serviceNames[String(service.id)] = service.name;
-        });
-      }
-    }
-
-    body.innerHTML = "";
-
-    orders.forEach(order => {
-      const row = document.createElement("tr");
-
-      const date = order.created_at
-        ? new Date(order.created_at).toLocaleDateString("en-NG")
-        : "—";
-
-      const values = [
-        serviceNames[String(order.service_id)] || "Service",
-        order.quantity ?? "—",
-        formatNaira(order.amount),
-        order.status || "Pending",
-        date
-      ];
-
-      values.forEach(value => {
-        const cell = document.createElement("td");
-        cell.textContent = value;
-        row.appendChild(cell);
-      });
-
-      body.appendChild(row);
-    });
-
-  } catch (error) {
-    console.error("Orders loading error:", error);
-
-    count.textContent = "Unavailable";
-
-    body.innerHTML =
-      "<tr><td colspan='5'>Could not load orders: " +
-      escapeHtml(error.message) +
-      "</td></tr>";
-  }
-}
-
-/* =========================================
-   LOG OUT
-========================================= */
-
-async function signOutUser() {
-  try {
-    const { error } = await withTimeout(
-      supabaseClient.auth.signOut()
-    );
-
-    if (error) throw error;
-
-    currentUser = null;
-    availableServices = [];
-
-    updateNavigation(null);
-
-    document.getElementById("dashboard").style.display = "none";
-    document.getElementById("landingPage").style.display = "block";
-    document.getElementById("siteFooter").style.display = "block";
-
-    window.scrollTo(0, 0);
-
-  } catch (error) {
-    alert("Could not log out: " + error.message);
-  }
-}
-
-/* =========================================
-   RESTORE EXISTING LOGIN SESSION
-========================================= */
-
-async function checkExistingSession() {
-  try {
-    const { data, error } = await withTimeout(
-      supabaseClient.auth.getSession()
-    );
-
-    if (error) throw error;
-
-    if (data.session && data.session.user) {
-      currentUser = data.session.user;
-      updateNavigation(currentUser);
-    } else {
-      currentUser = null;
-      updateNavigation(null);
-    }
-
-  } catch (error) {
-    console.error("Session restoration error:", error);
-  }
-}
-
-supabaseClient.auth.onAuthStateChange((event, session) => {
-  currentUser = session?.user || null;
-  updateNavigation(currentUser);
+  adminUser=null;
+  $("app").style.display="none";
+  $("loginPanel").classList.remove("hidden");
+  $("logoutBtn").classList.add("hidden");
+  $("signedInAs").textContent="Secure administrator access";
 });
 
-checkExistingSession();
+document.querySelectorAll(".tab").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===btn));
+    ["orders","services","customers"].forEach(name=>{
+      $(name+"Tab").classList.toggle("hidden",name!==btn.dataset.tab);
+    });
+  });
+});
 
+async function refreshAll(){
+  message("globalMsg","Refreshing dashboard...");
+  await Promise.allSettled([loadOrders(),loadServices(),loadCustomers()]);
+  message("globalMsg","");
+}
+
+async function loadOrders(){
+  $("ordersBody").innerHTML="<tr><td colspan='8'>Loading orders…</td></tr>";
+
+  const {data:orders,error}=await db
+    .from("orders")
+    .select("id,user_id,service_id,link,quantity,amount,status,created_at")
+    .order("created_at",{ascending:false})
+    .limit(500);
+
+  if(error){
+    $("ordersBody").innerHTML="<tr><td colspan='8'>"+safe(error.message)+"</td></tr>";
+    message("ordersMsg","Could not load orders. Check the admin orders RLS policy.");
+    return;
+  }
+
+  const userIds=[...new Set((orders||[]).map(o=>o.user_id).filter(Boolean))];
+  const serviceIds=[...new Set((orders||[]).map(o=>o.service_id).filter(Boolean))];
+
+  let profiles=[],services=[];
+
+  if(userIds.length){
+    const p=await db.from("profiles")
+      .select("id,email,full_name,balance,created_at")
+      .in("id",userIds);
+    if(!p.error) profiles=p.data||[];
+  }
+
+  if(serviceIds.length){
+    const s=await db.from("services")
+      .select("id,name")
+      .in("id",serviceIds);
+    if(!s.error) services=s.data||[];
+  }
+
+  const pm=new Map(profiles.map(p=>[p.id,p]));
+  const sm=new Map(services.map(s=>[s.id,s]));
+
+  $("totalOrders").textContent=(orders||[]).length;
+  $("pendingOrders").textContent=(orders||[]).filter(o=>(o.status||"").toLowerCase()==="pending").length;
+
+  if(!orders?.length){
+    $("ordersBody").innerHTML="<tr><td colspan='8'>No orders found.</td></tr>";
+    message("ordersMsg","");
+    return;
+  }
+
+  $("ordersBody").innerHTML=orders.map(o=>{
+    const p=pm.get(o.user_id)||{};
+    const service=sm.get(o.service_id)||{};
+    const status=String(o.status||"pending");
+
+    const options=["pending","processing","in progress","completed","cancelled","failed","on hold"];
+    const statusOptions=[...new Set([...options,status.toLowerCase()])]
+      .map(x=>`<option value="${safe(x)}" ${x===status.toLowerCase()?"selected":""}>${safe(x.replace(/\b\w/g,c=>c.toUpperCase()))}</option>`)
+      .join("");
+
+    return `<tr>
+      <td>${safe(dateText(o.created_at))}</td>
+      <td>${safe(p.full_name||"Customer")}<br><span class="muted">${safe(p.email||"Profile unavailable")}</span></td>
+      <td>${safe(service.name||"Service")}</td>
+      <td><a class="gold" href="${safe(o.link||"#")}" target="_blank" rel="noopener noreferrer">Open link</a></td>
+      <td>${safe(o.quantity)}</td>
+      <td>${safe(money(o.amount))}</td>
+      <td><select id="status-${safe(o.id)}">${statusOptions}</select></td>
+      <td><button class="btn" type="button" onclick="saveOrderStatus('${safe(o.id)}')">Save</button></td>
+    </tr>`;
+  }).join("");
+
+  message("ordersMsg","");
+}
+
+async function saveOrderStatus(id){
+  if(!adminUser)return;
+
+  const status=$("status-"+id).value;
+  const {error}=await db.from("orders").update({status}).eq("id",id);
+
+  if(error){
+    message("ordersMsg","Could not update order: "+error.message);
+    return;
+  }
+
+  message("ordersMsg","Order status updated.");
+  await loadOrders();
+}
+
+async function loadServices(){
+  $("servicesBody").innerHTML="<tr><td colspan='6'>Loading services…</td></tr>";
+
+  const {data,error}=await db.from("services")
+    .select("id,name,platform,type,price_per_1000,min_order,max_order,description,is_active,created_at")
+    .order("name");
+
+  if(error){
+    $("servicesBody").innerHTML="<tr><td colspan='6'>"+safe(error.message)+"</td></tr>";
+    message("serviceMsg","Could not load services.");
+    return;
+  }
+
+  cachedServices=data||[];
+  $("activeServices").textContent=cachedServices.filter(s=>s.is_active).length;
+
+  if(!cachedServices.length){
+    $("servicesBody").innerHTML="<tr><td colspan='6'>No services created yet.</td></tr>";
+    return;
+  }
+
+  $("servicesBody").innerHTML=cachedServices.map(s=>`<tr>
+    <td><b>${safe(s.name)}</b><br><span class="muted">${safe(s.description||"")}</span></td>
+    <td>${safe(s.platform)} / ${safe(s.type)}</td>
+    <td>${safe(money(s.price_per_1000))}</td>
+    <td>${safe(s.min_order)}–${safe(s.max_order)}</td>
+    <td><span class="badge">${s.is_active?"Active":"Inactive"}</span></td>
+    <td><div class="inline">
+      <button class="btn alt" type="button" onclick="editService('${safe(s.id)}')">Edit</button>
+      <button class="btn ${s.is_active?"danger":""}" type="button" onclick="toggleService('${safe(s.id)}',${!s.is_active})">${s.is_active?"Deactivate":"Activate"}</button>
+    </div></td>
+  </tr>`).join("");
+}
+
+function editService(id){
+  const s=cachedServices.find(x=>x.id===id);
+  if(!s)return;
+
+  $("serviceId").value=s.id;
+  $("serviceName").value=s.name||"";
+  $("servicePlatform").value=s.platform||"";
+  $("serviceType").value=s.type||"";
+  $("servicePrice").value=s.price_per_1000??0;
+  $("serviceMin").value=s.min_order??100;
+  $("serviceMax").value=s.max_order??10000;
+  $("serviceDescription").value=s.description||"";
+  $("serviceActive").checked=!!s.is_active;
+  $("saveServiceBtn").textContent="Save Changes";
+  message("serviceMsg","Editing: "+s.name);
+  $("serviceForm").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function clearServiceForm(){
+  $("serviceForm").reset();
+  $("serviceId").value="";
+  $("serviceMin").value=100;
+  $("serviceMax").value=10000;
+  $("serviceActive").checked=true;
+  $("saveServiceBtn").textContent="Add Service";
+  message("serviceMsg","");
+}
+
+$("cancelEditBtn").addEventListener("click",clearServiceForm);
+
+$("serviceForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!adminUser)return;
+
+  const min=Number($("serviceMin").value);
+  const max=Number($("serviceMax").value);
+  const price=Number($("servicePrice").value);
+
+  if(!Number.isInteger(min)||!Number.isInteger(max)||min<1||max<min||price<0){
+    message("serviceMsg","Check the price and quantity limits.");
+    return;
+  }
+
+  const record={
+    name:$("serviceName").value.trim(),
+    platform:$("servicePlatform").value.trim(),
+    type:$("serviceType").value.trim(),
+    price_per_1000:price,
+    min_order:min,
+    max_order:max,
+    description:$("serviceDescription").value.trim(),
+    is_active:$("serviceActive").checked
+  };
+
+  const id=$("serviceId").value;
+  const btn=$("saveServiceBtn");
+  btn.disabled=true;
+
+  try{
+    const result=id
+      ? await db.from("services").update(record).eq("id",id)
+      : await db.from("services").insert(record);
+
+    if(result.error)throw result.error;
+
+    message("serviceMsg",id?"Service updated successfully.":"Service added successfully.");
+    clearServiceForm();
+    await loadServices();
+  }catch(err){
+    message("serviceMsg","Could not save service: "+err.message);
+  }finally{
+    btn.disabled=false;
+  }
+});
+
+async function toggleService(id,active){
+  const {error}=await db.from("services").update({is_active:active}).eq("id",id);
+
+  if(error){
+    message("serviceMsg","Could not change service: "+error.message);
+    return;
+  }
+
+  message("serviceMsg",active?"Service activated.":"Service deactivated.");
+  await loadServices();
+}
+
+async function loadCustomers(){
+  $("customersBody").innerHTML="<tr><td colspan='4'>Loading customers…</td></tr>";
+
+  const {data,error}=await db.from("profiles")
+    .select("id,email,full_name,balance,created_at")
+    .order("created_at",{ascending:false})
+    .limit(500);
+
+  if(error){
+    $("customersBody").innerHTML="<tr><td colspan='4'>"+safe(error.message)+"</td></tr>";
+    $("totalCustomers").textContent="—";
+    message("customersMsg","Customer profile access is not enabled yet. Run the admin-only SELECT policy SQL.");
+    return;
+  }
+
+  $("totalCustomers").textContent=(data||[]).length;
+  message("customersMsg","");
+
+  if(!data?.length){
+    $("customersBody").innerHTML="<tr><td colspan='4'>No customer profiles found.</td></tr>";
+    return;
+  }
+
+  $("customersBody").innerHTML=data.map(p=>`<tr>
+    <td>${safe(p.full_name||"Customer")}</td>
+    <td>${safe(p.email||"—")}</td>
+    <td>${safe(money(p.balance))}</td>
+    <td>${safe(dateText(p.created_at))}</td>
+  </tr>`).join("");
+}
+
+$("refreshOrders").addEventListener("click",loadOrders);
+$("refreshServices").addEventListener("click",loadServices);
+$("refreshCustomers").addEventListener("click",loadCustomers);
+
+(async function restoreSession(){
+  const {data,error}=await db.auth.getSession();
+  if(error){
+    message("loginMsg",error.message);
+    return;
+  }
+  if(data.session?.user)await requireAdmin(data.session.user);
+})();
+
+db.auth.onAuthStateChange((event,session)=>{
+  if(event==="SIGNED_OUT"){
+    adminUser=null;
+    $("app").style.display="none";
+    $("loginPanel").classList.remove("hidden");
+  }
+});
 </script>
-
 </body>
 </html>
