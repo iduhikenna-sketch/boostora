@@ -3,1449 +3,558 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="BOOSTORA - Grow Your Influence. Expand Your Reach.">
-<title>BOOSTORA | Social Media Growth Platform</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>BOOSTORA - Social Media Growth</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0"></script>
 
 <style>
-:root{--gold:#ffc700;--black:#08080a;--panel:#151617}
+:root{
+ --bg:#101827;--panel:#192538;--panel2:#223149;
+ --accent:#f5c542;--text:#fff;--muted:#aab5c5;
+ --line:#304057;--green:#35cf91;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-background:#08080A;
-background-image:radial-gradient(circle at 70% 20%,rgba(255,199,0,.15),transparent 40%),radial-gradient(circle at 20% 80%,rgba(255,199,0,.08),transparent 30%),radial-gradient(rgba(255,255,255,.04) 1px,transparent 1px);
-background-size:auto,auto,24px 24px;
-color:white;font-family:Arial,sans-serif;line-height:1.6
-}
-a{text-decoration:none;color:inherit}
-button{font-family:inherit}
-.container{width:92%;max-width:1160px;margin:auto}
-header{background:rgba(8,8,10,.95);border-bottom:1px solid #292929;position:sticky;top:0;z-index:100}
-.nav{min-height:75px;display:flex;justify-content:space-between;align-items:center;gap:15px}
-.logo{color:var(--gold);font-size:25px;font-weight:900;letter-spacing:2px}
-nav{display:flex;gap:20px;font-size:14px}
-nav a:hover{color:var(--gold)}
-.btn{display:inline-block;background:var(--gold);color:#111;padding:12px 20px;border-radius:7px;font-weight:bold;border:1px solid var(--gold);cursor:pointer}
-.btn:disabled{opacity:.6;cursor:not-allowed}
-.btn-outline{background:transparent;color:white;border-color:#777}
-.actions{display:flex;gap:10px}
-.hero{padding:75px 0;background:radial-gradient(ellipse at top right,rgba(255,199,0,.12),transparent 60%)}
-.hero-grid{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:35px}
-.eyebrow{color:var(--gold);font-size:12px;font-weight:bold;letter-spacing:2px}
-h1{font-size:clamp(40px,5vw,64px);line-height:1.1;margin:18px 0}
-.gold{color:var(--gold)}
-.lead{color:#ccc;font-size:17px}
-.buttons,.badges{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}
-.badges span{font-size:12px;background:#171717;border:1px solid #383838;padding:8px 11px;border-radius:30px}
-.phone-area{min-height:480px;display:grid;place-items:center;position:relative}
-.phone{width:290px;padding:24px 20px;background:linear-gradient(145deg,#222526,#101111);border:1px solid #a48639;border-radius:28px;text-align:center;position:relative;z-index:2;box-shadow:0 18px 65px #000}
-.avatar{width:58px;height:58px;border-radius:50%;margin:auto;background:var(--gold);color:#111;display:grid;place-items:center;font-size:29px;font-weight:900}
-.phone h3{margin-top:10px}
-.handle{font-size:13px;color:#ddd;display:flex;justify-content:center;align-items:center;gap:6px}
-.verified{width:17px;height:17px;object-fit:contain}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:20px 0}
-.stats div{background:#292b2b;padding:9px 2px;border-radius:8px}
-.stats strong{display:block;color:var(--gold);font-size:17px}
-.stats small{font-size:10px;color:#bbb}
-.chart{background:#242626;padding:10px;border-radius:9px}
-.chart b{font-size:12px}
-.chart svg{width:100%;height:75px;display:block}
-.chart small{font-size:10px;color:#aaa}
-.phone-note{position:absolute;right:0;bottom:35px;max-width:140px;color:#f4d66f;font-weight:bold;font-size:14px}
-.float{position:absolute;width:54px;height:54px;border-radius:16px;background:white;display:grid;place-items:center;box-shadow:0 8px 24px #0009;z-index:3;animation:floating 3s ease-in-out infinite}
-.float img{width:76%;height:76%;object-fit:contain}
-.instagram{background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5)}
-.instagram img{width:74%;height:74%}
-.tiktok{background:#050505}
-.f1{top:22px;left:4%}.f2{top:105px;right:1%}.f3{bottom:25px;left:5%}.f4{bottom:80px;right:3%}.f5{top:8px;right:22%}
-@keyframes floating{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-section{padding:75px 0;border-bottom:1px solid #252525}
-.section-heading{text-align:center;max-width:700px;margin:0 auto 38px}
-.section-heading h2,.split h2{font-size:clamp(29px,4vw,39px);line-height:1.2;margin:12px 0}
-.section-heading p{color:#bbb}
-.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:15px}
-.card{padding:21px;border:1px solid #303333;border-radius:14px;background:linear-gradient(145deg,#191b1c,#101111)}
-.card:hover{border-color:var(--gold)}
-.card h3{margin:12px 0 5px}
-.card p,.card li{font-size:13px;color:#bbb}
-.card ul{padding-left:18px}
-.card li::marker{color:var(--gold)}
-.social-logo{width:62px;height:62px;border-radius:15px;display:grid;place-items:center;overflow:hidden;background:white}
-.social-logo img{width:100%;height:100%;object-fit:contain}
-.social-logo.instagram img{width:75%;height:75%}
-.social-logo.tiktok{background:black}
-.social-logo.tiktok img{width:75%;height:75%}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center}
-.features{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.feature{padding:18px;background:var(--panel);border:1px solid #303333;border-radius:12px}
-.feature-icon{color:var(--gold);font-size:25px}
-.feature p{color:#bbb;font-size:12px;margin-top:5px}
-.pricing{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.price-card h3{color:var(--gold);font-size:21px}
-.price{font-size:30px;font-weight:bold;margin:12px 0}
-.price-card ul{min-height:130px}
-.price-card .btn{margin-top:15px}
-.featured{border-color:var(--gold)}
-.notice{margin-top:22px;padding:15px;background:#1d190e;border:1px solid #80651e;border-radius:10px;color:#e9dfc4;font-size:12px}
-.testimonials{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.quote{font-size:30px;color:var(--gold)}
-.testimonial p{color:#ccc;font-size:14px;margin:10px 0}
-.testimonial small{color:var(--gold)}
-.cta{text-align:center;background:radial-gradient(ellipse at center,#63481933,transparent 65%)}
-.cta h2{font-size:clamp(30px,4vw,42px);margin:12px 0}
-.cta p{color:#bbb;margin:15px auto 25px;max-width:650px}
-footer{padding:45px 0;color:#ccc}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:25px}
-footer h4{color:white}
-footer a{display:block;font-size:13px;margin:8px 0}
-.copyright{border-top:1px solid #333;margin-top:25px;padding-top:20px;font-size:12px}
-
-/* ACCOUNT WINDOW */
-.modal-backdrop{position:fixed;inset:0;background:#000d;z-index:500;display:none;align-items:center;justify-content:center;padding:18px}
-.modal-backdrop.show{display:flex}
-.modal{width:100%;max-width:440px;background:#151617;border:1px solid #80651e;border-radius:15px;padding:25px;position:relative;max-height:90vh;overflow:auto}
-.modal h2{color:var(--gold);margin-bottom:8px}
-.modal p{color:#bbb;font-size:13px;margin-bottom:15px}
-.close{position:absolute;right:15px;top:10px;background:none;border:0;color:white;font-size:27px;cursor:pointer}
-.field{margin:12px 0}
-.field label{display:block;font-size:13px;color:#ddd;margin-bottom:5px}
-.field input,.field select{width:100%;padding:12px;border-radius:7px;border:1px solid #444;background:#090a0b;color:white}
-.form-msg{font-size:13px;margin:12px 0;color:var(--gold);min-height:20px;overflow-wrap:anywhere}
-.text-btn{background:none;border:0;color:var(--gold);cursor:pointer;text-decoration:underline;font-size:13px}
+body{background:var(--bg);color:var(--text);font-family:Arial,sans-serif;line-height:1.5}
+button,input,select{font:inherit}
+button{cursor:pointer}
 .hidden{display:none!important}
-
-/* CUSTOMER DASHBOARD */
-#dashboard{display:none;padding:55px 0;min-height:75vh}
-.dash-top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:25px}
-.dash-top h2{font-size:30px}
-.dash-top p{color:#aaa}
-.dash-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:20px 0}
-.dash-stat{background:#17191a;border:1px solid #383838;border-radius:12px;padding:20px}
-.dash-stat span{font-size:13px;color:#bbb}
-.dash-stat strong{display:block;color:var(--gold);font-size:25px;margin-top:5px;overflow-wrap:anywhere}
-.dash-columns{display:grid;grid-template-columns:1fr 1.5fr;gap:18px;margin-top:20px}
-.dash-panel{background:#151617;border:1px solid #303333;border-radius:12px;padding:20px;overflow:auto}
-.dash-panel h3{margin-bottom:15px;color:var(--gold)}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:520px;font-size:13px}
-th,td{text-align:left;padding:11px;border-bottom:1px solid #333}
-th{color:var(--gold)}
-.service-list{display:grid;gap:10px}
-.service-row{padding:13px;background:#202223;border-radius:8px;display:flex;justify-content:space-between;gap:12px;align-items:center}
-.service-row small{display:block;color:#aaa}
-.service-row button{white-space:nowrap;padding:9px 12px}
-.order-form{margin-top:15px;padding-top:15px;border-top:1px solid #333}
-.wallet-panel{margin-top:20px}
-.wallet-fund-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:end}
-.wallet-fund-grid .field{margin:0}
-.wallet-panel .muted-note{font-size:12px;color:#aaa;margin-top:10px}
-.transaction-status{color:var(--gold);text-transform:capitalize}
-@media(max-width:950px){.grid{grid-template-columns:repeat(3,1fr)}.pricing,.testimonials{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:760px){
-.nav{padding:12px 0;flex-wrap:wrap;justify-content:center}
-nav{width:100%;justify-content:center;flex-wrap:wrap;gap:14px}
-.hero-grid,.split{grid-template-columns:1fr}
-.hero-copy{text-align:center}
-.buttons,.badges{justify-content:center}
-.phone-area{min-height:450px}
-.footer-grid{grid-template-columns:repeat(2,1fr)}
-.dash-columns{grid-template-columns:1fr}
-}
-@media(max-width:520px){
-.grid,.pricing,.testimonials,.features{grid-template-columns:1fr}
-.phone{width:min(290px,82vw)}
-.float{width:46px;height:46px}
-.f1,.f3{left:0}.f2,.f4{right:0}
-.phone-note{right:0;bottom:0;font-size:12px;max-width:120px}
-.footer-grid{grid-template-columns:1fr 1fr}
-.dash-cards{grid-template-columns:1fr}
-.wallet-fund-grid{grid-template-columns:1fr}
-.wallet-fund-grid .btn{width:100%}
-}
+.app{max-width:650px;margin:auto;min-height:100vh;padding-bottom:85px}
+header{padding:19px 18px;background:var(--panel);border-bottom:1px solid var(--line)}
+.head{display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:24px;font-weight:900;letter-spacing:2px;color:var(--accent)}
+.user-small{font-size:12px;color:var(--muted)}
+main{padding:18px}
+.screen{display:none}
+.screen.active{display:block}
+h2{font-size:22px;margin-bottom:5px}
+h3{font-size:17px}
+.muted{color:var(--muted);font-size:13px}
+.card{background:var(--panel);border:1px solid var(--line);padding:17px;border-radius:14px;margin:14px 0}
+.balance{background:linear-gradient(120deg,#283b55,#172438);border:1px solid #52647b}
+.balance small{color:#d3d9e3}
+.balance strong{display:block;font-size:30px;color:var(--accent);margin:8px 0}
+.btn{border:0;border-radius:9px;padding:12px 16px;background:var(--accent);color:#172033;font-weight:bold}
+.btn.secondary{background:var(--panel2);color:white;border:1px solid var(--line)}
+.btn.full{width:100%}
+.btn:disabled{opacity:.5}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}
+.quick button{background:var(--panel);border:1px solid var(--line);border-radius:12px;color:white;padding:16px 5px}
+.quick span{display:block;font-size:24px;margin-bottom:5px}
+.quick small{font-size:12px}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:22px 0 12px}
+.tabs{display:flex;gap:9px;margin:17px 0;overflow:auto}
+.tab{flex:1;min-width:90px;padding:11px;border:1px solid var(--line);background:var(--panel);color:white;border-radius:9px}
+.tab.active{background:var(--accent);color:#172033;font-weight:bold}
+.platforms{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.platform{padding:13px 5px;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:white}
+.platform.active{border:2px solid var(--accent);color:var(--accent)}
+.platform span{display:block;font-size:21px}
+.service{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px;margin:10px 0}
+.service-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.service strong{font-size:15px}
+.price{color:var(--accent);font-weight:bold}
+.service small{color:var(--muted)}
+.service button{margin-top:12px;width:100%}
+.field{margin:13px 0}
+.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.field input,.field select{width:100%;padding:13px;background:#101827;border:1px solid var(--line);border-radius:9px;color:white}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{flex:1}
+.menu-item{display:flex;justify-content:space-between;align-items:center;padding:16px 4px;border-bottom:1px solid var(--line);color:white;cursor:pointer}
+.menu-item span:first-child{display:flex;gap:12px;align-items:center}
+.menu-icon{font-size:21px;width:30px;text-align:center}
+.status{color:var(--accent);text-transform:capitalize}
+.message{font-size:13px;color:var(--accent);margin-top:10px;overflow-wrap:anywhere}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:430px}
+td,th{text-align:left;padding:11px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--accent)}
+.table-wrap{overflow:auto}
+nav.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:650px;display:grid;grid-template-columns:repeat(3,1fr);background:#172438;border-top:1px solid var(--line);padding:9px 10px calc(9px + env(safe-area-inset-bottom));z-index:10}
+nav.bottom button{background:none;border:0;color:var(--muted);font-size:12px;padding:5px}
+nav.bottom button span{display:block;font-size:22px}
+nav.bottom button.active{color:var(--accent)}
+.modal-bg{position:fixed;inset:0;background:#000c;z-index:30;display:none;align-items:center;justify-content:center;padding:15px}
+.modal-bg.show{display:flex}
+.modal{width:100%;max-width:430px;background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:22px;max-height:90vh;overflow:auto}
+.modal h2{color:var(--accent)}
+.modal input{width:100%;padding:12px;background:var(--bg);color:white;border:1px solid var(--line);border-radius:8px}
+.modal label{display:block;margin:12px 0 5px;font-size:13px}
+.modal-close{float:right;background:none;border:0;color:white;font-size:24px}
+.link{background:none;border:0;color:var(--accent);text-decoration:underline;margin-top:12px}
+@media(min-width:600px){main{padding:25px}.platforms{grid-template-columns:repeat(5,1fr)}}
 </style>
 </head>
 
 <body>
-
-<header id="siteHeader">
-<div class="container nav">
-<a href="#home" class="logo">BOOSTORA</a>
-<nav>
-<a href="#home">Home</a>
-<a href="#services">Services</a>
-<a href="#pricing">Pricing</a>
-<a href="#about">About</a>
-<a href="#contact">Contact</a>
-</nav>
-<div class="actions" id="guestActions">
-<button class="btn btn-outline" onclick="openAuth('login')">Log In</button>
-<button class="btn" onclick="openAuth('signup')">Get Started</button>
-</div>
-<div class="actions hidden" id="userActions">
-<button class="btn btn-outline" onclick="showDashboard()">My Dashboard</button>
-<button class="btn" onclick="signOutUser()">Log Out</button>
-</div>
-</div>
+<div class="app">
+<header>
+ <div class="head">
+  <div class="logo">BOOSTORA</div>
+  <div style="text-align:right">
+   <div id="headerName">Welcome</div>
+   <div class="user-small" id="headerEmail">Social Media Growth</div>
+  </div>
+ </div>
 </header>
 
-<main id="landingPage">
+<main>
 
-<section class="hero" id="home">
-<div class="container hero-grid">
-<div class="hero-copy">
-<span class="eyebrow">SOCIAL MEDIA GROWTH PLATFORM</span>
-<h1>Grow Your Influence.<br><span class="gold">Expand Your Reach.</span></h1>
-<p class="lead">Build a stronger online presence with authentic promotion, audience discovery and clear campaign insights. BOOSTORA helps creators and businesses put their content in front of more people.</p>
-<div class="buttons">
-<button class="btn" onclick="openAuth('signup')">Get Started Now →</button>
-<a href="#how" class="btn btn-outline">▶ Watch How It Works</a>
-</div>
-<div class="badges">
-<span>✓ Real Engagement</span><span>✓ Safe &amp; Secure</span><span>✓ Fast Delivery</span><span>✓ 24/7 Support</span>
-</div>
-</div>
+<!-- HOME -->
+<section id="homeScreen" class="screen active">
+ <h2 id="greeting">Welcome to BOOSTORA 👋</h2>
+ <p class="muted">Grow your social media presence, simply.</p>
 
-<div class="phone-area">
-<div class="float instagram f1"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"></div>
-<div class="float tiktok f2"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Tiktok_icon.svg" alt="TikTok"></div>
-<div class="float f3"><img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube"></div>
-<div class="float f4"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"></div>
-<div class="float f5"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X"></div>
+ <div class="card balance">
+  <small>MY WALLET BALANCE</small>
+  <strong id="homeBalance">₦0.00</strong>
+  <button class="btn" onclick="go('moreScreen');showMore('wallet')">＋ Add Money</button>
+ </div>
 
-<div class="phone">
-<div class="avatar">B</div>
-<h3>Your Brand</h3>
-<div class="handle">@yourbrand
-<img class="verified" src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" alt="Decorative badge">
-</div>
-<div class="stats">
-<div><strong>125K</strong><small>Followers</small></div>
-<div><strong>2.4M</strong><small>Likes</small></div>
-<div><strong>1.8M</strong><small>Views</small></div>
-</div>
-<div class="chart">
-<b>Your Growth Journey</b>
-<svg viewBox="0 0 240 75">
-<defs>
-<filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
-<feGaussianBlur stdDeviation="3" result="blur"/>
-<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-</filter>
-</defs>
-<path d="M 8 62 L 42 43 L 72 51 L 105 30 L 137 38 L 174 16 L 211 7" stroke="#FFC700" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#goldGlow)"/>
-<polygon points="211,7 193,10 205,22" fill="#FFC700" filter="url(#goldGlow)"/>
-</svg>
-<small>Illustrative growth preview</small>
-</div>
-</div>
-<div class="phone-note">More Followers.<br>More Opportunities.</div>
-</div>
-</div>
+ <div class="quick">
+  <button onclick="go('storeScreen')"><span>🛍️</span><small>Buy Services</small></button>
+  <button onclick="showOrders()"><span>📦</span><small>My Orders</small></button>
+  <button onclick="go('moreScreen');showMore('wallet')"><span>💳</span><small>My Wallet</small></button>
+ </div>
+
+ <div class="section-title"><h3>How can we help you?</h3></div>
+ <div class="card">
+  <h3>🚀 Grow your account</h3>
+  <p class="muted">Choose your social media platform, select a service and place your order.</p>
+  <button class="btn full" style="margin-top:14px" onclick="go('storeScreen')">Explore Services</button>
+ </div>
+
+ <div class="card">
+  <h3>📋 Recent Orders</h3>
+  <div id="homeOrders" class="muted">Your recent orders will appear here.</div>
+  <button class="link" onclick="showOrders()">View all orders →</button>
+ </div>
 </section>
 
-<section id="services">
-<div class="container">
-<div class="section-heading">
-<span class="eyebrow">WHAT WE OFFER</span>
-<h2>Our Social Media <span class="gold">Services</span></h2>
-<p>Promotion and campaign support across the platforms you use every day.</p>
-</div>
-<div class="grid">
-<div class="card">
-<div class="social-logo instagram"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram"></div>
-<h3>Instagram</h3><p>Build a stronger Instagram presence.</p>
-<ul><li>Profile promotion</li><li>Reel promotion</li><li>Audience discovery</li><li>Engagement campaigns</li></ul>
-</div>
-<div class="card">
-<div class="social-logo tiktok"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Tiktok_icon.svg" alt="TikTok"></div>
-<h3>TikTok</h3><p>Give your videos more opportunities to be discovered.</p>
-<ul><li>Video promotion</li><li>Creator partnerships</li><li>Content campaigns</li><li>Performance insights</li></ul>
-</div>
-<div class="card">
-<div class="social-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube"></div>
-<h3>YouTube</h3><p>Help your videos and channel reach interested viewers.</p>
-<ul><li>Video advertising</li><li>Channel discovery</li><li>Content promotion</li><li>Campaign reporting</li></ul>
-</div>
-<div class="card">
-<div class="social-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"></div>
-<h3>Facebook</h3><p>Promote your business and community.</p>
-<ul><li>Page promotion</li><li>Post campaigns</li><li>Audience targeting</li><li>Brand awareness</li></ul>
-</div>
-<div class="card">
-<div class="social-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X"></div>
-<h3>X</h3><p>Expand the reach of your ideas and brand.</p>
-<ul><li>Post promotion</li><li>Audience discovery</li><li>Brand campaigns</li><li>Performance insights</li></ul>
-</div>
-</div>
-</div>
+<!-- STORE -->
+<section id="storeScreen" class="screen">
+ <h2>BOOSTORA Store 🛍️</h2>
+ <p class="muted">Choose a platform and the service you need.</p>
+
+ <div class="tabs">
+  <button class="tab active" id="profileTab" onclick="setType('profile')">Profile</button>
+  <button class="tab" id="videoTab" onclick="setType('video')">Video</button>
+ </div>
+
+ <div class="platforms">
+  <button class="platform active" onclick="setPlatform('Instagram',this)"><span>📸</span>Instagram</button>
+  <button class="platform" onclick="setPlatform('TikTok',this)"><span>🎵</span>TikTok</button>
+  <button class="platform" onclick="setPlatform('YouTube',this)"><span>▶️</span>YouTube</button>
+  <button class="platform" onclick="setPlatform('Facebook',this)"><span>ⓕ</span>Facebook</button>
+  <button class="platform" onclick="setPlatform('X',this)"><span>𝕏</span>X</button>
+ </div>
+
+ <div class="section-title">
+  <h3 id="serviceHeading">Instagram Services</h3>
+  <span class="muted" id="serviceCount"></span>
+ </div>
+ <div id="servicesList" class="muted">Loading services...</div>
 </section>
 
-<section id="about">
-<div class="container split">
-<div>
-<span class="eyebrow">WHY CHOOSE BOOSTORA</span>
-<h2>Your Success Is <span class="gold">Our Priority.</span></h2>
-<p class="lead">We believe social media growth should be built on real people, meaningful engagement and transparent promotion. Our goal is to help creators and businesses build lasting online visibility.</p>
-<br><a href="#pricing" class="btn">Explore Our Plans →</a>
-</div>
-<div class="features">
-<div class="feature"><div class="feature-icon">✓</div><b>Authentic Engagement</b><p>Focus on real audiences and genuine interactions.</p></div>
-<div class="feature"><div class="feature-icon">⚡</div><b>Campaign Support</b><p>Organized campaign planning and progress updates.</p></div>
-<div class="feature"><div class="feature-icon">▥</div><b>Clear Analytics</b><p>Understand reach, clicks and available results.</p></div>
-<div class="feature"><div class="feature-icon">🔒</div><b>Safe &amp; Secure</b><p>Never share your social media password with us.</p></div>
-<div class="feature"><div class="feature-icon">₦</div><b>Flexible Budgets</b><p>Campaign options for different business needs.</p></div>
-<div class="feature"><div class="feature-icon">24/7</div><b>Customer Support</b><p>Get help with campaign questions and updates.</p></div>
-</div>
-</div>
+<!-- MORE -->
+<section id="moreScreen" class="screen">
+ <h2>More</h2>
+ <p class="muted">Manage your BOOSTORA account.</p>
+
+ <div class="card">
+  <div class="row">
+   <div style="font-size:34px">👤</div>
+   <div>
+    <strong id="moreName">Customer</strong>
+    <p class="muted" id="moreEmail"></p>
+   </div>
+  </div>
+ </div>
+
+ <div class="card" style="padding:8px 16px">
+  <div class="menu-item" onclick="showMore('wallet')"><span><span class="menu-icon">💰</span>Wallet & Fund Account</span><span>›</span></div>
+  <div class="menu-item" onclick="showOrders()"><span><span class="menu-icon">📦</span>My Orders</span><span>›</span></div>
+  <div class="menu-item" onclick="showMore('history')"><span><span class="menu-icon">🪙</span>Coin / Transaction History</span><span>›</span></div>
+  <div class="menu-item" onclick="showMore('account')"><span><span class="menu-icon">👤</span>Manage Account</span><span>›</span></div>
+  <div class="menu-item" onclick="showMore('faq')"><span><span class="menu-icon">❓</span>FAQ</span><span>›</span></div>
+  <div class="menu-item" onclick="showMore('contact')"><span><span class="menu-icon">💬</span>Contact Us</span><span>›</span></div>
+ </div>
+
+ <div id="moreDetails"></div>
+ <button class="btn secondary full" style="margin-top:18px" onclick="logout()">Log Out</button>
 </section>
 
-<section id="pricing">
-<div class="container">
-<div class="section-heading">
-<span class="eyebrow">OUR PACKAGES</span>
-<h2>Simple &amp; Flexible <span class="gold">Pricing</span></h2>
-<p>Choose a starting campaign package that matches your goals.</p>
-</div>
-<div class="pricing">
-<div class="card price-card"><h3>Basic</h3><p>For individuals getting started.</p><div class="price">₦5,000</div><ul><li>Campaign consultation</li><li>One promotion plan</li><li>Audience recommendations</li><li>Basic campaign summary</li></ul><button class="btn" onclick="openAuth('signup')">Choose Basic</button></div>
-<div class="card price-card featured"><h3>Standard</h3><p>For growing creators and brands.</p><div class="price">₦10,000</div><ul><li>Campaign planning</li><li>Promotion recommendations</li><li>Audience targeting guidance</li><li>Performance report</li></ul><button class="btn" onclick="openAuth('signup')">Choose Standard</button></div>
-<div class="card price-card"><h3>Premium</h3><p>For businesses with bigger goals.</p><div class="price">₦20,000</div><ul><li>Extended campaign planning</li><li>Multiple promotion activities</li><li>Creator partnership planning</li><li>Detailed campaign report</li></ul><button class="btn" onclick="openAuth('signup')">Choose Premium</button></div>
-<div class="card price-card"><h3>Custom Plan</h3><p>For a campaign built around your needs.</p><div class="price">Let's Talk</div><ul><li>Personalized campaign scope</li><li>Flexible budget</li><li>Tailored recommendations</li><li>Agreed reporting plan</li></ul><a href="#contact" class="btn">Request a Plan</a></div>
-</div>
-<div class="notice">Prices are indicative starting prices for campaign planning and promotion services. They do not guarantee a specific number of followers, likes, views or subscribers. Final deliverables and costs must be confirmed before an order or payment is accepted.</div>
-</div>
-</section>
-
-<section id="testimonials">
-<div class="container">
-<div class="section-heading">
-<span class="eyebrow">CUSTOMER EXPERIENCES</span>
-<h2>What Our Customers <span class="gold">Say</span></h2>
-<p>Genuine customer feedback will appear here as BOOSTORA completes its first campaigns.</p>
-</div>
-<div class="testimonials">
-<div class="card testimonial"><div class="quote">“</div><p>A space for a real customer's experience with BOOSTORA.</p><b>Customer review</b><br><small>Awaiting first verified review</small></div>
-<div class="card testimonial"><div class="quote">“</div><p>A space for genuine feedback from a creator or business owner.</p><b>Customer review</b><br><small>Awaiting first verified review</small></div>
-<div class="card testimonial"><div class="quote">“</div><p>A space to share a real campaign experience and its results.</p><b>Customer review</b><br><small>Awaiting first verified review</small></div>
-<div class="card testimonial"><div class="quote">“</div><p>A space for another authentic customer story when available.</p><b>Customer review</b><br><small>Awaiting first verified review</small></div>
-</div>
-</div>
-</section>
-
-<section class="cta" id="how">
-<div class="container">
-<span class="eyebrow">A SIMPLE, TRANSPARENT PROCESS</span>
-<h2>Ready to grow with <span class="gold">BOOSTORA?</span></h2>
-<p>Choose your goal, plan your campaign and follow its progress with clear updates.</p>
-<button class="btn" onclick="openAuth('signup')">Get Started →</button>
-</div>
-</section>
-
-<section class="cta" id="contact">
-<div class="container">
-<span class="eyebrow">YOUR NEXT CHAPTER STARTS HERE</span>
-<h2>Let's build your <span class="gold">online presence.</span></h2>
-<p>Contact BOOSTORA to discuss a campaign for your brand.</p>
-<a href="mailto:hello@boostora.example?subject=BOOSTORA%20Enquiry" class="btn">Contact BOOSTORA →</a>
-</div>
-</section>
 </main>
 
-<!-- CUSTOMER DASHBOARD -->
-<section id="dashboard" class="container">
-<div class="dash-top">
-<div><span class="eyebrow">CUSTOMER ACCOUNT</span><h2>Welcome, <span class="gold" id="welcomeName">Customer</span></h2><p id="accountEmail"></p></div>
-<button class="btn btn-outline" onclick="backToHome()">Back to Website</button>
+<nav class="bottom">
+ <button class="active" id="navHome" onclick="go('homeScreen')"><span>⌂</span>Home</button>
+ <button id="navStore" onclick="go('storeScreen')"><span>🛍</span>Store</button>
+ <button id="navMore" onclick="go('moreScreen')"><span>☰</span>More</button>
+</nav>
 </div>
 
-<div class="dash-cards">
-<div class="dash-stat"><span>Wallet Balance</span><strong id="walletBalance">Loading...</strong></div>
-<div class="dash-stat"><span>Total Orders</span><strong id="orderCount">Loading...</strong></div>
-<div class="dash-stat"><span>Account Status</span><strong style="font-size:20px">Active</strong></div>
+<!-- AUTH -->
+<div class="modal-bg" id="authModal">
+ <div class="modal">
+  <button class="modal-close" onclick="closeAuth()">×</button>
+  <h2 id="authTitle">Welcome to BOOSTORA</h2>
+  <p class="muted" id="authDescription">Log in to continue.</p>
+  <form id="authForm">
+   <div id="nameGroup">
+    <label>Full Name</label>
+    <input id="fullName" required placeholder="Your full name">
+   </div>
+   <label>Email Address</label>
+   <input id="email" type="email" required placeholder="Email address">
+   <label>Password</label>
+   <input id="password" type="password" minlength="6" required placeholder="Password">
+   <button class="btn full" style="margin-top:18px" id="authButton">Log In</button>
+   <div class="message" id="authMessage"></div>
+  </form>
+  <button class="link" id="authSwitch" onclick="switchAuth()">Create an account</button>
+ </div>
 </div>
 
-<!-- WALLET FUNDING -->
-<div class="dash-panel wallet-panel">
-<h3>Fund Your Wallet</h3>
-<p style="font-size:13px;color:#bbb;margin-bottom:12px">Add money securely to your BOOSTORA wallet using Paystack.</p>
-<form id="fundWalletForm">
-<div class="wallet-fund-grid">
-<div class="field">
-<label for="fundAmount">Amount to fund (₦)</label>
-<input id="fundAmount" type="number" min="100" max="500000" step="1" placeholder="Enter amount (e.g. 5000)" required>
-</div>
-<button class="btn" id="fundWalletBtn" type="submit">Fund Wallet</button>
-</div>
-<p class="muted-note">Minimum ₦100. Maximum ₦500,000 per transaction. Payments are processed securely through Paystack.</p>
-<p id="paymentMessage" class="form-msg" role="status" aria-live="polite"></p>
-</form>
-</div>
-
-<div class="dash-panel wallet-panel">
-<h3>Wallet Transactions</h3>
-<div class="table-wrap">
-<table>
-<thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th><th>Reference</th></tr></thead>
-<tbody id="transactionsBody"><tr><td colspan="5">Loading transactions...</td></tr></tbody>
-</table>
-</div>
-</div>
-
-<div class="dash-columns">
-<div class="dash-panel">
-<h3>Available Services</h3>
-<div id="serviceList" class="service-list">Loading services...</div>
-<div class="order-form">
-<h3>Place an Order</h3>
-<form id="orderForm">
-<div class="field"><label for="orderService">Select service</label><select id="orderService" required><option value="">Choose a service</option></select></div>
-<div class="field"><label for="orderLink">Profile / post / video link</label><input id="orderLink" type="url" placeholder="https://..." required></div>
-<div class="field"><label for="orderQuantity">Quantity</label><input id="orderQuantity" type="number" min="1" step="1" required></div>
-<p id="orderEstimate" class="form-msg">Choose a service and quantity to see the estimate.</p>
-<button class="btn" type="submit">Submit Order</button>
-<div id="orderMessage" class="form-msg" role="status"></div>
-</form>
-</div>
-</div>
-
-<div class="dash-panel">
-<h3>My Orders</h3>
-<div class="table-wrap">
-<table>
-<thead><tr><th>Service</th><th>Quantity</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
-<tbody id="ordersBody"><tr><td colspan="5">Loading orders...</td></tr></tbody>
-</table>
-</div>
-<p style="font-size:12px;color:#aaa;margin-top:14px">Orders are submitted as pending for review. The order amount is deducted from your wallet when the order is submitted successfully.</p>
-</div>
-</div>
-</section>
-
-<footer id="siteFooter">
-<div class="container">
-<div class="footer-grid">
-<div><a href="#home" class="logo">BOOSTORA</a><p>Grow Your Influence. Expand Your Reach.<br>Authentic social media promotion for creators and businesses.</p></div>
-<div><h4>Explore</h4><a href="#home">Home</a><a href="#services">Services</a><a href="#about">About</a><a href="#pricing">Pricing</a></div>
-<div><h4>Company</h4><a href="#how">How It Works</a><a href="#testimonials">Customer Reviews</a><a href="#contact">Contact</a></div>
-<div><h4>Platforms</h4><a href="#services">Instagram</a><a href="#services">TikTok</a><a href="#services">YouTube</a><a href="#services">Facebook &amp; X</a></div>
-</div>
-<div class="copyright">© 2026 BOOSTORA. All rights reserved.</div>
-</div>
-</footer>
-
-<!-- LOGIN / REGISTRATION POPUP -->
-<div class="modal-backdrop" id="authBackdrop" onclick="if(event.target===this)closeAuth()">
-<div class="modal">
-<button class="close" onclick="closeAuth()" aria-label="Close">&times;</button>
-<h2 id="authTitle">Create your account</h2>
-<p id="authIntro">Register to access your BOOSTORA customer dashboard.</p>
-<form id="authForm">
-<div class="field" id="nameField"><label for="fullName">Full name</label><input id="fullName" type="text" autocomplete="name" placeholder="Your full name"></div>
-<div class="field"><label for="authEmail">Email address</label><input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com"></div>
-<div class="field"><label for="authPassword">Password</label><input id="authPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="At least 6 characters"></div>
-<button class="btn" id="authSubmit" type="submit" style="width:100%">Create Account</button>
-<div class="form-msg" id="authMessage" role="status"></div>
-</form>
-<p><span id="switchText">Already have an account?</span> <button class="text-btn" id="switchAuth" onclick="switchAuthMode()">Log in</button></p>
-</div>
+<!-- ORDER -->
+<div class="modal-bg" id="orderModal">
+ <div class="modal">
+  <button class="modal-close" onclick="closeOrder()">×</button>
+  <h2 id="orderTitle">Place Order</h2>
+  <p class="muted" id="orderDescription"></p>
+  <form id="orderForm">
+   <label>Profile / Video Link</label>
+   <input id="orderLink" type="url" required placeholder="https://...">
+   <label>Quantity</label>
+   <input id="orderQuantity" type="number" min="1" required placeholder="Enter quantity">
+   <p class="message" id="orderEstimate">Estimated amount: ₦0.00</p>
+   <button class="btn full" id="orderButton" style="margin-top:15px">Confirm Order</button>
+   <div class="message" id="orderMessage"></div>
+  </form>
+ </div>
 </div>
 
 <script>
-/* =========================================
-   BOOSTORA SUPABASE CONNECTION
-========================================= */
+const SUPABASE_URL="https://zjtmdapnbypftvrlfuue.supabase.co";
+const SUPABASE_KEY="sb_publishable_SMrC3NQlEKey0D9igmu4Yw_6zzzZBYN";
+const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-const SUPABASE_URL = "https://zjtmdapnbypftvrlfuue.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_SMrC3NQlEKey0D9igmu4Yw_6zzzZBYN";
+let user=null,services=[],selectedService=null;
+let authMode="login",platform="Instagram",serviceType="profile";
+let orders=[],transactions=[];
 
-if (!window.supabase) {
-  document.body.insertAdjacentHTML(
-    "afterbegin",
-    '<div style="background:#500;color:white;padding:15px;text-align:center">BOOSTORA could not load its connection library. Please refresh the page.</div>'
-  );
-  throw new Error("Supabase library failed to load.");
+const $=id=>document.getElementById(id);
+const money=n=>"₦"+Number(n||0).toLocaleString("en-NG",{minimumFractionDigits:2,maximumFractionDigits:2});
+const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+
+function go(screen){
+ document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+ $(screen).classList.add("active");
+ ["Home","Store","More"].forEach(n=>$("nav"+n).classList.toggle("active",screen===n.toLowerCase()+"Screen"));
+ window.scrollTo(0,0);
+ if(screen==="storeScreen")renderServices();
+ if(screen==="homeScreen")renderHomeOrders();
 }
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
-    }
-  }
-);
-
-let authMode = "signup";
-let currentUser = null;
-let availableServices = [];
-let paymentReturnHandled = false;
-
-/* =========================================
-   GENERAL HELPERS
-========================================= */
-
-function withTimeout(promise, milliseconds = 15000) {
-  let timer;
-
-  const timeout = new Promise((resolve, reject) => {
-    timer = setTimeout(() => {
-      reject(new Error("The request took too long. Please check your connection and try again."));
-    }, milliseconds);
-  });
-
-  return Promise.race([promise, timeout]).finally(() => {
-    clearTimeout(timer);
-  });
+function openAuth(mode="login"){
+ authMode=mode;updateAuth();$("authMessage").textContent="";
+ $("authModal").classList.add("show");
+}
+function closeAuth(){$("authModal").classList.remove("show")}
+function switchAuth(){authMode=authMode==="login"?"signup":"login";updateAuth()}
+function updateAuth(){
+ const signup=authMode==="signup";
+ $("authTitle").textContent=signup?"Create Account":"Welcome Back";
+ $("authDescription").textContent=signup?"Join BOOSTORA today.":"Log in to your account.";
+ $("nameGroup").classList.toggle("hidden",!signup);
+ $("fullName").required=signup;
+ $("password").autocomplete=signup?"new-password":"current-password";
+ $("authButton").textContent=signup?"Create Account":"Log In";
+ $("authSwitch").textContent=signup?"Already have an account? Log in":"New to BOOSTORA? Create an account";
 }
 
-function formatNaira(value) {
-  const amount = Number(value);
-
-  if (!Number.isFinite(amount)) return "₦0.00";
-
-  return "₦" + amount.toLocaleString("en-NG", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
-}
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
-}
-
-function showMessage(element, message) {
-  if (element) element.textContent = message;
-}
-
-/* =========================================
-   LOGIN / REGISTRATION WINDOW
-========================================= */
-
-function openAuth(mode = "signup") {
-  authMode = mode;
-  updateAuthForm();
-
-  document.getElementById("authMessage").textContent = "";
-  document.getElementById("authBackdrop").classList.add("show");
-}
-
-function closeAuth() {
-  document.getElementById("authBackdrop").classList.remove("show");
-}
-
-function switchAuthMode() {
-  authMode = authMode === "signup" ? "login" : "signup";
-  updateAuthForm();
-
-  document.getElementById("authMessage").textContent = "";
-}
-
-function updateAuthForm() {
-  const signup = authMode === "signup";
-
-  document.getElementById("authTitle").textContent =
-    signup ? "Create your account" : "Welcome back";
-
-  document.getElementById("authIntro").textContent =
-    signup
-      ? "Register to access your BOOSTORA customer dashboard."
-      : "Log in to manage your BOOSTORA orders.";
-
-  document.getElementById("nameField").classList.toggle("hidden", !signup);
-  document.getElementById("fullName").required = signup;
-
-  document.getElementById("authPassword").autocomplete =
-    signup ? "new-password" : "current-password";
-
-  document.getElementById("authSubmit").textContent =
-    signup ? "Create Account" : "Log In";
-
-  document.getElementById("switchText").textContent =
-    signup ? "Already have an account?" : "Don't have an account?";
-
-  document.getElementById("switchAuth").textContent =
-    signup ? "Log in" : "Create account";
-}
-
-/* =========================================
-   REGISTER AND LOGIN
-========================================= */
-
-document.getElementById("authForm").addEventListener("submit", async function(event) {
-  event.preventDefault();
-
-  const message = document.getElementById("authMessage");
-  const button = document.getElementById("authSubmit");
-
-  const email = document.getElementById("authEmail").value.trim();
-  const password = document.getElementById("authPassword").value;
-  const fullName = document.getElementById("fullName").value.trim();
-
-  button.disabled = true;
-  button.textContent = "Please wait...";
-  message.textContent = "Connecting securely...";
-
-  try {
-    if (authMode === "signup") {
-      if (!fullName) {
-        throw new Error("Please enter your full name.");
-      }
-
-      const { data, error } = await withTimeout(
-        supabaseClient.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { full_name: fullName }
-          }
-        })
-      );
-
-      if (error) throw error;
-
-      if (data.session && data.user) {
-        currentUser = data.user;
-        closeAuth();
-        await openDashboard();
-      } else {
-        message.textContent =
-          "Registration received. Please check your email and confirm your account before logging in.";
-      }
-
-    } else {
-      const { data, error } = await withTimeout(
-        supabaseClient.auth.signInWithPassword({
-          email,
-          password
-        })
-      );
-
-      if (error) throw error;
-
-      currentUser = data.user;
-      closeAuth();
-      await openDashboard();
-    }
-
-  } catch (error) {
-    console.error("Authentication error:", error);
-
-    message.textContent =
-      error.message || "Something went wrong. Please try again.";
-
-  } finally {
-    button.disabled = false;
-    button.textContent =
-      authMode === "signup" ? "Create Account" : "Log In";
-  }
-});
-
-/* =========================================
-   NAVIGATION
-========================================= */
-
-function updateNavigation(user) {
-  const signedIn = !!user;
-
-  document.getElementById("guestActions")
-    .classList.toggle("hidden", signedIn);
-
-  document.getElementById("userActions")
-    .classList.toggle("hidden", !signedIn);
-}
-
-/* =========================================
-   OPEN CUSTOMER DASHBOARD
-========================================= */
-
-async function openDashboard() {
-  if (!currentUser) return;
-
-  document.getElementById("landingPage").style.display = "none";
-  document.getElementById("siteFooter").style.display = "none";
-  document.getElementById("dashboard").style.display = "block";
-
-  updateNavigation(currentUser);
-
-  document.getElementById("accountEmail").textContent =
-    currentUser.email || "";
-
-  document.getElementById("welcomeName").textContent =
-    currentUser.user_metadata?.full_name || "Customer";
-
-  document.getElementById("walletBalance").textContent = "Loading...";
-  document.getElementById("orderCount").textContent = "Loading...";
-  document.getElementById("serviceList").textContent = "Loading services...";
-
-  document.getElementById("ordersBody").innerHTML =
-    "<tr><td colspan='5'>Loading orders...</td></tr>";
-
-  document.getElementById("transactionsBody").innerHTML =
-    "<tr><td colspan='5'>Loading transactions...</td></tr>";
-
-  document.getElementById("orderMessage").textContent = "";
-
-  const results = await Promise.allSettled([
-    loadProfile(),
-    loadServices(),
-    loadOrders(),
-    loadTransactions()
-  ]);
-
-  results.forEach((result, index) => {
-    if (result.status === "rejected") {
-      console.error("Dashboard request failed:", index, result.reason);
-    }
-  });
-
-  await handlePaystackReturn();
-
-  window.scrollTo(0, 0);
-}
-
-async function showDashboard() {
-  try {
-    const { data, error } = await withTimeout(
-      supabaseClient.auth.getUser()
-    );
-
-    if (error || !data.user) {
-      openAuth("login");
-      return;
-    }
-
-    currentUser = data.user;
-    await openDashboard();
-
-  } catch (error) {
-    console.error("Session check error:", error);
-    openAuth("login");
-  }
-}
-
-function backToHome() {
-  document.getElementById("dashboard").style.display = "none";
-  document.getElementById("landingPage").style.display = "block";
-  document.getElementById("siteFooter").style.display = "block";
-
-  window.scrollTo(0, 0);
-}
-
-/* =========================================
-   LOAD CUSTOMER PROFILE AND WALLET
-========================================= */
-
-async function loadProfile() {
-  const balance = document.getElementById("walletBalance");
-
-  try {
-    const { data, error } = await withTimeout(
-      supabaseClient
-        .from("profiles")
-        .select("full_name,balance")
-        .eq("id", currentUser.id)
-        .maybeSingle()
-    );
-
-    if (error) throw error;
-
-    if (!data) {
-      balance.textContent = "Profile unavailable";
-      console.error("No profile row found for:", currentUser.id);
-      return;
-    }
-
-    document.getElementById("welcomeName").textContent =
-      data.full_name ||
-      currentUser.user_metadata?.full_name ||
-      "Customer";
-
-    balance.textContent = formatNaira(data.balance);
-
-  } catch (error) {
-    console.error("Profile loading error:", error);
-    balance.textContent = "Unavailable";
-  }
-}
-
-/* =========================================
-   PAYSTACK WALLET FUNDING
-========================================= */
-
-const PAYSTACK_FUNCTION_NAME = "paystack-wallet";
-
-document.getElementById("fundWalletForm").addEventListener("submit", async function(event) {
-  event.preventDefault();
-
-  const amountInput = document.getElementById("fundAmount");
-  const button = document.getElementById("fundWalletBtn");
-  const message = document.getElementById("paymentMessage");
-
-  const amount = Number(amountInput.value);
-
-  if (!currentUser) {
-    message.textContent = "Please log in before funding your wallet.";
+$("authForm").onsubmit=async e=>{
+ e.preventDefault();
+ const button=$("authButton");
+ button.disabled=true;
+ $("authMessage").textContent="Please wait...";
+ try{
+  let result;
+  if(authMode==="signup"){
+   result=await client.auth.signUp({
+    email:$("email").value.trim(),
+    password:$("password").value,
+    options:{data:{full_name:$("fullName").value.trim()}}
+   });
+   if(!result.error&&!result.data.session){
+    $("authMessage").textContent="Account created. Please confirm your email, then log in.";
     return;
+   }
+  }else{
+   result=await client.auth.signInWithPassword({
+    email:$("email").value.trim(),password:$("password").value
+   });
   }
+  if(result.error)throw result.error;
+  user=result.data.user;
+  closeAuth();
+  await loadDashboard();
+ }catch(err){$("authMessage").textContent=err.message}
+ finally{button.disabled=false}
+};
 
-  if (!Number.isInteger(amount) || amount < 100 || amount > 500000) {
-    message.textContent = "Enter a whole amount between ₦100 and ₦500,000.";
-    return;
-  }
-
-  button.disabled = true;
-  button.textContent = "Connecting to Paystack...";
-  message.textContent = "Preparing your secure payment...";
-
-  try {
-    const callbackUrl = window.location.origin + window.location.pathname;
-
-    const { data, error } = await withTimeout(
-      supabaseClient.functions.invoke(PAYSTACK_FUNCTION_NAME, {
-        body: {
-          action: "initialize",
-          amount: amount,
-          callback_url: callbackUrl
-        }
-      }),
-      30000
-    );
-
-    if (error) {
-      let detail = error.message || "Could not start payment.";
-
-      try {
-        if (error.context && typeof error.context.json === "function") {
-          const responseBody = await error.context.json();
-          detail = responseBody.error || responseBody.message || detail;
-        }
-      } catch (_) {}
-
-      throw new Error(detail);
-    }
-
-    if (!data || !data.authorization_url) {
-      throw new Error(data?.error || "Paystack did not return a checkout link.");
-    }
-
-    message.textContent = "Opening secure Paystack checkout...";
-
-    window.location.assign(data.authorization_url);
-
-  } catch (error) {
-    console.error("Wallet funding initialization error:", error);
-
-    message.textContent =
-      "Payment could not be started: " + (error.message || "Please try again.");
-
-    button.disabled = false;
-    button.textContent = "Fund Wallet";
-  }
-});
-
-/* =========================================
-   VERIFY PAYSTACK PAYMENT AFTER RETURN
-========================================= */
-
-async function handlePaystackReturn() {
-  if (paymentReturnHandled || !currentUser) return;
-
-  const params = new URLSearchParams(window.location.search);
-  const reference = params.get("reference") || params.get("trxref");
-
-  if (!reference) return;
-
-  paymentReturnHandled = true;
-
-  const message = document.getElementById("paymentMessage");
-  const button = document.getElementById("fundWalletBtn");
-
-  message.textContent = "Checking your Paystack payment. Please wait...";
-  button.disabled = true;
-  button.textContent = "Verifying...";
-
-  try {
-    const { data, error } = await withTimeout(
-      supabaseClient.functions.invoke(PAYSTACK_FUNCTION_NAME, {
-        body: {
-          action: "verify",
-          reference: reference
-        }
-      }),
-      30000
-    );
-
-    if (error) {
-      let detail = error.message || "Payment verification failed.";
-
-      try {
-        if (error.context && typeof error.context.json === "function") {
-          const responseBody = await error.context.json();
-          detail = responseBody.error || responseBody.message || detail;
-        }
-      } catch (_) {}
-
-      throw new Error(detail);
-    }
-
-    if (!data || data.success !== true) {
-      throw new Error(data?.error || data?.message || "Paystack has not confirmed this payment.");
-    }
-
-    message.textContent =
-      data.already_credited
-        ? "This payment was already credited to your wallet."
-        : "Payment successful! Your BOOSTORA wallet has been credited.";
-
-    document.getElementById("fundAmount").value = "";
-
-    await Promise.allSettled([
-      loadProfile(),
-      loadTransactions()
-    ]);
-
-  } catch (error) {
-    console.error("Paystack verification error:", error);
-
-    message.textContent =
-      "We could not confirm this payment yet: " +
-      (error.message || "Please contact support with your payment reference: " + reference);
-
-  } finally {
-    button.disabled = false;
-    button.textContent = "Fund Wallet";
-
-    // Remove the payment reference from the address bar after verification.
-    // This does not affect the saved payment transaction.
-    const cleanUrl = window.location.origin + window.location.pathname;
-    window.history.replaceState({}, document.title, cleanUrl);
-  }
+async function loadDashboard(){
+ if(!user)return;
+ const name=user.user_metadata?.full_name||"Customer";
+ $("headerName").textContent=name;
+ $("headerEmail").textContent=user.email||"";
+ $("moreName").textContent=name;
+ $("moreEmail").textContent=user.email||"";
+ $("greeting").textContent="Welcome, "+name+" 👋";
+ await Promise.allSettled([loadProfile(),loadServices(),loadOrders(),loadTransactions()]);
+ go("homeScreen");
 }
 
-/* =========================================
-   LOAD WALLET TRANSACTION HISTORY
-========================================= */
-
-async function loadTransactions() {
-  const body = document.getElementById("transactionsBody");
-
-  body.innerHTML =
-    "<tr><td colspan='5'>Loading transactions...</td></tr>";
-
-  try {
-    const { data, error } = await withTimeout(
-      supabaseClient
-        .from("transactions")
-        .select("amount,type,status,reference,created_at")
-        .eq("user_id", currentUser.id)
-        .order("created_at", { ascending: false })
-        .limit(100)
-    );
-
-    if (error) throw error;
-
-    if (!data || !data.length) {
-      body.innerHTML =
-        "<tr><td colspan='5'>No wallet transactions yet.</td></tr>";
-      return;
-    }
-
-    body.innerHTML = "";
-
-    data.forEach(transaction => {
-      const row = document.createElement("tr");
-
-      const date = transaction.created_at
-        ? new Date(transaction.created_at).toLocaleString("en-NG")
-        : "—";
-
-      const values = [
-        date,
-        String(transaction.type || "Transaction").replace(/_/g, " "),
-        formatNaira(transaction.amount),
-        transaction.status || "Pending",
-        transaction.reference || "—"
-      ];
-
-      values.forEach((value, index) => {
-        const cell = document.createElement("td");
-        cell.textContent = value;
-
-        if (index === 3) {
-          cell.className = "transaction-status";
-        }
-
-        row.appendChild(cell);
-      });
-
-      body.appendChild(row);
-    });
-
-  } catch (error) {
-    console.error("Transaction history error:", error);
-
-    body.innerHTML =
-      "<tr><td colspan='5'>Could not load transactions: " +
-      escapeHtml(error.message) +
-      "</td></tr>";
-  }
+async function loadProfile(){
+ const {data,error}=await client.from("profiles")
+ .select("full_name,balance").eq("id",user.id).maybeSingle();
+ if(error)throw error;
+ const balance=data?.balance||0;
+ $("homeBalance").textContent=money(balance);
+ if(data?.full_name){
+  $("headerName").textContent=data.full_name;
+  $("moreName").textContent=data.full_name;
+  $("greeting").textContent="Welcome, "+data.full_name+" 👋";
+ }
 }
 
-/* =========================================
-   LOAD ACTIVE SERVICES
-========================================= */
-
-async function loadServices() {
-  const list = document.getElementById("serviceList");
-  const select = document.getElementById("orderService");
-
-  list.textContent = "Loading services...";
-  select.innerHTML = '<option value="">Choose a service</option>';
-
-  try {
-    const { data, error } = await withTimeout(
-      supabaseClient
-        .from("services")
-        .select("id,name,platform,type,price_per_1000,min_order,max_order,description,is_active")
-        .eq("is_active", true)
-        .order("name")
-    );
-
-    if (error) throw error;
-
-    availableServices = data || [];
-
-    if (!availableServices.length) {
-      list.textContent =
-        "No active services found. Please check your services table and permissions.";
-      return;
-    }
-
-    list.innerHTML = "";
-
-    availableServices.forEach(service => {
-      const price = Number(service.price_per_1000 || 0);
-
-      const row = document.createElement("div");
-      row.className = "service-row";
-
-      const info = document.createElement("div");
-
-      const name = document.createElement("b");
-      name.textContent = service.name || "Unnamed service";
-
-      const detail = document.createElement("small");
-      detail.textContent =
-        (service.platform || "Social Media") +
-        " · " + formatNaira(price) + " per 1,000";
-
-      info.appendChild(name);
-      info.appendChild(detail);
-
-      const choose = document.createElement("button");
-      choose.className = "btn";
-      choose.textContent = "Select";
-      choose.type = "button";
-
-      choose.addEventListener("click", () => {
-        select.value = service.id;
-        updateOrderEstimate();
-
-        document.getElementById("orderForm")
-          .scrollIntoView({ behavior: "smooth" });
-      });
-
-      row.appendChild(info);
-      row.appendChild(choose);
-      list.appendChild(row);
-
-      const option = document.createElement("option");
-      option.value = service.id;
-      option.textContent = service.name;
-
-      select.appendChild(option);
-    });
-
-  } catch (error) {
-    console.error("Services loading error:", error);
-
-    availableServices = [];
-
-    list.textContent =
-      "Could not load services: " + error.message;
-  }
+async function loadServices(){
+ const {data,error}=await client.from("services")
+ .select("id,name,platform,type,price_per_1000,min_order,max_order,description,is_active")
+ .eq("is_active",true).order("name");
+ if(error)throw error;
+ services=data||[];
+ renderServices();
 }
 
-/* =========================================
-   ORDER PRICE ESTIMATE
-========================================= */
-
-function updateOrderEstimate() {
-  const service = availableServices.find(
-    item =>
-      String(item.id) ===
-      String(document.getElementById("orderService").value)
-  );
-
-  const quantity = Number(
-    document.getElementById("orderQuantity").value
-  );
-
-  const estimate = document.getElementById("orderEstimate");
-
-  if (!service || !quantity || quantity < 1) {
-    estimate.textContent =
-      "Choose a service and quantity to see the estimate.";
-    return;
-  }
-
-  const amount =
-    Number(service.price_per_1000) * quantity / 1000;
-
-  const price = Math.round((amount + Number.EPSILON) * 100) / 100;
-
-  estimate.textContent =
-    "Estimated amount: " + formatNaira(price);
+function setType(type){
+ serviceType=type;
+ $("profileTab").classList.toggle("active",type==="profile");
+ $("videoTab").classList.toggle("active",type==="video");
+ renderServices();
 }
 
-document.getElementById("orderService")
-  .addEventListener("change", updateOrderEstimate);
+function setPlatform(value,button){
+ platform=value;
+ document.querySelectorAll(".platform").forEach(b=>b.classList.remove("active"));
+ button.classList.add("active");
+ renderServices();
+}
 
-document.getElementById("orderQuantity")
-  .addEventListener("input", updateOrderEstimate);
+function renderServices(){
+ const filtered=services.filter(s=>{
+  const p=String(s.platform||"").toLowerCase();
+  const t=String(s.type||"").toLowerCase();
+  const name=String(s.name||"").toLowerCase();
+  const platformMatch=p.includes(platform.toLowerCase())||(!p&&name.includes(platform.toLowerCase()));
+  const video=t.includes("video")||t.includes("view")||name.includes("view")||name.includes("video");
+  const profile=t.includes("profile")||t.includes("follower")||t.includes("subscriber")||t.includes("like")||name.includes("follower")||name.includes("subscriber")||name.includes("like");
+  const typeMatch=serviceType==="video"?video:(!video&&(profile||!t));
+  return platformMatch&&typeMatch;
+ });
+ $("serviceHeading").textContent=platform+" Services";
+ $("serviceCount").textContent=filtered.length+" services";
+ const list=$("servicesList");
+ if(!filtered.length){
+  list.innerHTML='<div class="card muted">No services in this category yet. Please check another category.</div>';
+  return;
+ }
+ list.innerHTML=filtered.map(s=>`
+ <div class="service">
+  <div class="service-top">
+   <strong>${safe(s.name)}</strong>
+   <span class="price">${money(s.price_per_1000)}</span>
+  </div>
+  <small>Price per 1,000 · Minimum ${safe(s.min_order||1)} · Maximum ${safe(s.max_order||1000000)}</small>
+  <button class="btn full" onclick="openOrder('${safe(s.id)}')">Select Service</button>
+ </div>`).join("");
+}
 
-/* =========================================
-   SUBMIT ORDER THROUGH SECURE DATABASE FUNCTION
-========================================= */
+function openOrder(id){
+ selectedService=services.find(s=>String(s.id)===String(id));
+ if(!selectedService)return;
+ $("orderTitle").textContent=selectedService.name;
+ $("orderDescription").textContent="Price: "+money(selectedService.price_per_1000)+" per 1,000";
+ $("orderLink").value="";
+ $("orderQuantity").value="";
+ $("orderEstimate").textContent="Enter a quantity to calculate your price.";
+ $("orderMessage").textContent="";
+ $("orderModal").classList.add("show");
+}
+function closeOrder(){$("orderModal").classList.remove("show")}
 
-document.getElementById("orderForm")
-  .addEventListener("submit", async function(event) {
-    event.preventDefault();
+function estimateOrder(){
+ if(!selectedService)return;
+ const q=Number($("orderQuantity").value);
+ if(!q){$("orderEstimate").textContent="Enter a quantity to calculate your price.";return}
+ $("orderEstimate").textContent="Estimated amount: "+money(Number(selectedService.price_per_1000)*q/1000);
+}
+$("orderQuantity").addEventListener("input",estimateOrder);
 
-    const message = document.getElementById("orderMessage");
-    const button = this.querySelector("button[type='submit']");
-
-    const service = availableServices.find(
-      item =>
-        String(item.id) ===
-        String(document.getElementById("orderService").value)
-    );
-
-    const link = document.getElementById("orderLink").value.trim();
-    const quantity = Number(
-      document.getElementById("orderQuantity").value
-    );
-
-    if (!currentUser) {
-      message.textContent = "Please log in first.";
-      return;
-    }
-
-    if (!service) {
-      message.textContent = "Please select a valid service.";
-      return;
-    }
-
-    const minimum = Number(service.min_order) || 1;
-    const maximum = Number(service.max_order) || 1000000;
-
-    if (
-      !Number.isInteger(quantity) ||
-      quantity < minimum ||
-      quantity > maximum
-    ) {
-      message.textContent =
-        "Quantity must be between " + minimum + " and " + maximum + ".";
-      return;
-    }
-
-    try {
-      const validUrl = new URL(link);
-
-      if (!["http:", "https:"].includes(validUrl.protocol)) {
-        throw new Error("Invalid link");
-      }
-
-    } catch (error) {
-      message.textContent =
-        "Please enter a valid https:// or http:// link.";
-      return;
-    }
-
-    button.disabled = true;
-    button.textContent = "Submitting...";
-    message.textContent =
-      "Checking your wallet and submitting your order...";
-
-    try {
-      const { data, error } = await withTimeout(
-        supabaseClient.rpc("place_order", {
-          p_service_id: service.id,
-          p_link: link,
-          p_quantity: quantity
-        }),
-        20000
-      );
-
-      if (error) throw error;
-
-      if (!data) {
-        throw new Error(
-          "The server did not return an order confirmation. Refresh your dashboard and check your orders and wallet before trying again."
-        );
-      }
-
-      const result = Array.isArray(data) ? data[0] : data;
-
-      if (result && result.success === false) {
-        throw new Error(result.message || "The order was not accepted.");
-      }
-
-      const chargedAmount =
-        result?.amount ??
-        result?.total_amount ??
-        result?.order_amount ??
-        0;
-
-      message.textContent =
-        "Your order was submitted successfully. " +
-        formatNaira(chargedAmount) +
-        " has been deducted from your wallet. Your order is pending review.";
-
-      this.reset();
-      updateOrderEstimate();
-
-      await Promise.allSettled([
-        loadProfile(),
-        loadOrders(),
-        loadTransactions()
-      ]);
-
-    } catch (error) {
-      console.error("Order submission error:", error);
-
-      const errorText = String(error.message || "");
-
-      if (
-        errorText.toLowerCase().includes("insufficient")
-      ) {
-        message.textContent =
-          "Insufficient wallet balance. Please fund your wallet before placing this order.";
-
-      } else if (
-        errorText.toLowerCase().includes("not authenticated")
-      ) {
-        message.textContent =
-          "Your session has expired. Please log in again.";
-
-      } else if (
-        errorText.toLowerCase().includes("too long")
-      ) {
-        message.textContent =
-          "The request timed out. Please check My Orders and your wallet before submitting again, to avoid a duplicate order.";
-
-      } else {
-        message.textContent =
-          "Order could not be submitted: " + errorText;
-      }
-
-    } finally {
-      button.disabled = false;
-      button.textContent = "Submit Order";
-    }
+$("orderForm").onsubmit=async e=>{
+ e.preventDefault();
+ if(!selectedService||!user)return;
+ const q=Number($("orderQuantity").value);
+ const min=Number(selectedService.min_order)||1;
+ const max=Number(selectedService.max_order)||1000000;
+ if(!Number.isInteger(q)||q<min||q>max){
+  $("orderMessage").textContent="Quantity must be between "+min+" and "+max;return;
+ }
+ try{
+  const url=new URL($("orderLink").value.trim());
+  if(!["http:","https:"].includes(url.protocol))throw Error();
+ }catch{$("orderMessage").textContent="Enter a valid profile or video link.";return}
+ const button=$("orderButton");
+ button.disabled=true;button.textContent="Submitting...";
+ $("orderMessage").textContent="Submitting your order...";
+ try{
+  const {data,error}=await client.rpc("place_order",{
+   p_service_id:selectedService.id,
+   p_link:$("orderLink").value.trim(),
+   p_quantity:q
   });
+  if(error)throw error;
+  if(!data)throw Error("No order confirmation received. Check your orders before trying again.");
+  const result=Array.isArray(data)?data[0]:data;
+  if(result?.success===false)throw Error(result.message||"Order was not accepted.");
+  $("orderMessage").textContent="Order submitted successfully. Your order is pending review.";
+  await Promise.allSettled([loadProfile(),loadOrders(),loadTransactions()]);
+  setTimeout(closeOrder,1600);
+ }catch(err){
+  $("orderMessage").textContent=err.message;
+ }finally{
+  button.disabled=false;button.textContent="Confirm Order";
+ }
+};
 
-/* =========================================
-   LOAD CUSTOMER'S OWN ORDERS
-========================================= */
-
-async function loadOrders() {
-  const body = document.getElementById("ordersBody");
-  const count = document.getElementById("orderCount");
-
-  body.innerHTML =
-    "<tr><td colspan='5'>Loading orders...</td></tr>";
-
-  try {
-    const { data: orders, error } = await withTimeout(
-      supabaseClient
-        .from("orders")
-        .select("id,service_id,quantity,amount,status,created_at")
-        .eq("user_id", currentUser.id)
-        .order("created_at", { ascending: false })
-    );
-
-    if (error) throw error;
-
-    count.textContent = (orders || []).length;
-
-    if (!orders || !orders.length) {
-      body.innerHTML =
-        "<tr><td colspan='5'>You have not placed any orders yet.</td></tr>";
-      return;
-    }
-
-    const serviceNames = {};
-
-    (availableServices || []).forEach(service => {
-      serviceNames[String(service.id)] = service.name;
-    });
-
-    const serviceIds = [
-      ...new Set(
-        orders.map(order => order.service_id).filter(Boolean)
-      )
-    ];
-
-    const missingIds = serviceIds.filter(
-      id => !serviceNames[String(id)]
-    );
-
-    if (missingIds.length) {
-      const { data: services, error: serviceError } = await withTimeout(
-        supabaseClient
-          .from("services")
-          .select("id,name")
-          .in("id", missingIds)
-      );
-
-      if (serviceError) {
-        console.warn("Could not retrieve some service names:", serviceError);
-      } else {
-        (services || []).forEach(service => {
-          serviceNames[String(service.id)] = service.name;
-        });
-      }
-    }
-
-    body.innerHTML = "";
-
-    orders.forEach(order => {
-      const row = document.createElement("tr");
-
-      const date = order.created_at
-        ? new Date(order.created_at).toLocaleDateString("en-NG")
-        : "—";
-
-      const values = [
-        serviceNames[String(order.service_id)] || "Service",
-        order.quantity ?? "—",
-        formatNaira(order.amount),
-        order.status || "Pending",
-        date
-      ];
-
-      values.forEach(value => {
-        const cell = document.createElement("td");
-        cell.textContent = value;
-        row.appendChild(cell);
-      });
-
-      body.appendChild(row);
-    });
-
-  } catch (error) {
-    console.error("Orders loading error:", error);
-
-    count.textContent = "Unavailable";
-
-    body.innerHTML =
-      "<tr><td colspan='5'>Could not load orders: " +
-      escapeHtml(error.message) +
-      "</td></tr>";
-  }
+async function loadOrders(){
+ const {data,error}=await client.from("orders")
+ .select("id,service_id,quantity,amount,status,created_at")
+ .eq("user_id",user.id).order("created_at",{ascending:false}).limit(50);
+ if(error)throw error;
+ orders=data||[];
+ renderHomeOrders();
+}
+function renderHomeOrders(){
+ if(!orders.length){$("homeOrders").textContent="No orders yet. Visit the Store to get started.";return}
+ $("homeOrders").innerHTML=orders.slice(0,3).map(o=>{
+  const s=services.find(x=>String(x.id)===String(o.service_id));
+  return `<div class="menu-item"><span>${safe(s?.name||"Service")}</span><span class="status">${safe(o.status||"pending")}</span></div>`;
+ }).join("");
+}
+function showOrders(){
+ go("moreScreen");
+ $("moreDetails").innerHTML=`
+ <div class="card"><h3>My Orders</h3><div class="table-wrap">
+ <table><thead><tr><th>Service</th><th>Quantity</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+ <tbody>${orders.length?orders.map(o=>{
+ const s=services.find(x=>String(x.id)===String(o.service_id));
+ return `<tr><td>${safe(s?.name||"Service")}</td><td>${safe(o.quantity)}</td><td>${money(o.amount)}</td><td class="status">${safe(o.status)}</td><td>${o.created_at?new Date(o.created_at).toLocaleDateString("en-NG"):"—"}</td></tr>`;
+ }).join(""):'<tr><td colspan="5">No orders yet.</td></tr>'}</tbody></table></div></div>`;
 }
 
-/* =========================================
-   LOG OUT
-========================================= */
-
-async function signOutUser() {
-  try {
-    const { error } = await withTimeout(
-      supabaseClient.auth.signOut()
-    );
-
-    if (error) throw error;
-
-    currentUser = null;
-    availableServices = [];
-
-    updateNavigation(null);
-
-    document.getElementById("dashboard").style.display = "none";
-    document.getElementById("landingPage").style.display = "block";
-    document.getElementById("siteFooter").style.display = "block";
-
-    window.scrollTo(0, 0);
-
-  } catch (error) {
-    alert("Could not log out: " + error.message);
-  }
+async function loadTransactions(){
+ const {data,error}=await client.from("transactions")
+ .select("amount,type,status,reference,created_at")
+ .eq("user_id",user.id).order("created_at",{ascending:false}).limit(100);
+ if(error)throw error;
+ transactions=data||[];
 }
 
-/* =========================================
-   RESTORE EXISTING LOGIN SESSION
-========================================= */
-
-async function checkExistingSession() {
-  try {
-    const { data, error } = await withTimeout(
-      supabaseClient.auth.getSession()
-    );
-
-    if (error) throw error;
-
-    if (data.session && data.session.user) {
-      currentUser = data.session.user;
-      updateNavigation(currentUser);
-
-      const params = new URLSearchParams(window.location.search);
-      const hasPaymentReference =
-        params.has("reference") || params.has("trxref");
-
-      // A Paystack return should reopen the customer dashboard
-      // so the payment can be verified against the signed-in account.
-      if (hasPaymentReference) {
-        await openDashboard();
-      }
-
-    } else {
-      currentUser = null;
-      updateNavigation(null);
-
-      const params = new URLSearchParams(window.location.search);
-      if (params.has("reference") || params.has("trxref")) {
-        document.getElementById("authMessage").textContent =
-          "Please log in to the account that started this payment so we can verify it.";
-        openAuth("login");
-      }
-    }
-
-  } catch (error) {
-    console.error("Session restoration error:", error);
-  }
+function showMore(page){
+ go("moreScreen");
+ const box=$("moreDetails");
+ if(page==="wallet"){
+ box.innerHTML=`
+ <div class="card"><h3>💰 Wallet</h3><p class="muted">Current balance</p><h2 style="color:var(--accent)" id="walletAmount">${$("homeBalance").textContent}</h2>
+ <form id="fundForm">
+ <div class="field"><label>Amount to add (₦)</label><input id="fundAmount" type="number" min="100" max="500000" step="1" required placeholder="Enter amount"></div>
+ <button class="btn full" id="fundButton">Fund Wallet with Paystack</button>
+ <div class="message" id="fundMessage"></div>
+ </form></div>`;
+ $("fundForm").onsubmit=fundWallet;
+ }else if(page==="history"){
+ box.innerHTML=`<div class="card"><h3>🪙 Transaction History</h3><div class="table-wrap"><table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody>${transactions.length?transactions.map(t=>`<tr><td>${t.created_at?new Date(t.created_at).toLocaleDateString("en-NG"):"—"}</td><td>${safe(t.type)}</td><td>${money(t.amount)}</td><td>${safe(t.status)}</td></tr>`).join(""):'<tr><td colspan="4">No transactions yet.</td></tr>'}</tbody></table></div></div>`;
+ }else if(page==="account"){
+ box.innerHTML=`<div class="card"><h3>Manage Account</h3><p class="muted">Your registered account details.</p><div class="field"><label>Email address</label><input value="${safe(user.email)}" disabled></div><div class="field"><label>Full name</label><input value="${safe(user.user_metadata?.full_name||"Customer")}" disabled></div></div>`;
+ }else if(page==="faq"){
+ box.innerHTML=`<div class="card"><h3>Frequently Asked Questions</h3><p><b>How do I order?</b></p><p class="muted">Open Store, choose a service, enter your link and quantity, then confirm.</p><br><p><b>How do I add money?</b></p><p class="muted">Open More, select Wallet and use Paystack to fund your account.</p><br><p><b>Where can I see my orders?</b></p><p class="muted">Open More and select My Orders.</p><br><p><b>Do I share my password?</b></p><p class="muted">No. Never give your social media password to anyone.</p></div>`;
+ }else if(page==="contact"){
+ box.innerHTML=`<div class="card"><h3>Contact BOOSTORA</h3><p class="muted">Need assistance with your account, payment or order?</p><br><a class="btn full" href="mailto:hello@boostora.example?subject=BOOSTORA%20Support">Email Support</a></div>`;
+ }
 }
 
-supabaseClient.auth.onAuthStateChange((event, session) => {
-  currentUser = session?.user || null;
-  updateNavigation(currentUser);
-});
+async function fundWallet(e){
+ e.preventDefault();
+ const amount=Number($("fundAmount").value);
+ if(!Number.isInteger(amount)||amount<100||amount>500000){
+ $("fundMessage").textContent="Enter an amount between ₦100 and ₦500,000.";return;
+ }
+ const button=$("fundButton");
+ button.disabled=true;button.textContent="Please wait...";
+ try{
+ const {data,error}=await client.functions.invoke("paystack-wallet",{
+ body:{action:"initialize",amount,callback_url:location.origin+location.pathname}
+ });
+ if(error)throw error;
+ if(!data?.authorization_url)throw Error(data?.error||"Payment link unavailable.");
+ location.assign(data.authorization_url);
+ }catch(err){
+ $("fundMessage").textContent=err.message;
+ button.disabled=false;button.textContent="Fund Wallet with Paystack";
+ }
+}
 
-checkExistingSession();
+async function verifyPayment(){
+ const params=new URLSearchParams(location.search);
+ const reference=params.get("reference")||params.get("trxref");
+ if(!reference||!user)return;
+ try{
+ const {data,error}=await client.functions.invoke("paystack-wallet",{
+ body:{action:"verify",reference}
+ });
+ if(error)throw error;
+ if(!data?.success)throw Error(data?.error||"Payment is not confirmed yet.");
+ alert(data.already_credited?"Payment was already credited.":"Payment successful! Your wallet has been credited.");
+ await Promise.allSettled([loadProfile(),loadTransactions()]);
+ }catch(err){alert("Payment verification: "+err.message)}
+ finally{history.replaceState({},document.title,location.pathname)}
+}
 
+async function logout(){
+ const {error}=await client.auth.signOut();
+ if(error){alert(error.message);return}
+ user=null;services=[];orders=[];transactions=[];
+ $("homeBalance").textContent="₦0.00";
+ $("moreDetails").innerHTML="";
+ go("homeScreen");
+ openAuth("login");
+}
+
+async function start(){
+ const {data}=await client.auth.getSession();
+ if(data.session){
+  user=data.session.user;
+  await loadDashboard();
+  await verifyPayment();
+ }else{
+  openAuth("login");
+  const params=new URLSearchParams(location.search);
+  if(params.has("reference")||params.has("trxref")){
+   $("authDescription").textContent="Please log in to verify your payment.";
+  }
+ }
+}
+start();
 </script>
-
 </body>
 </html>
