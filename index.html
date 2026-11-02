@@ -1,70 +1,377 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TTBoost</title>
+<title>BOOSTORA</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#0a1020;color:#fff;padding-bottom:80px}
-.header{display:flex;justify-content:space-between;padding:15px 20px;background:#0f1a33}
-.logo{color:#ff2d5a;font-weight:900}
-.coin{background:#1a2a4a;padding:5px 12px;border-radius:20px;border:1px solid #2a3a5a}
-.avatar{width:180px;height:180px;border-radius:50%;margin:30px auto 10px;padding:3px;background:linear-gradient(135deg,#ff2d5a,#8a2be2)}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,sans-serif}
+:root{--bg:#0a1020;--panel:#111d36;--header:#0f1a33;--pink:#ff2d5a;--yellow:#ffcc00;--muted:#6b7a99;--line:#1a2a4a}
+body{background:var(--bg);color:#fff;padding-bottom:85px}
+.header{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:var(--header);position:sticky;top:0;z-index:5}
+.logo{color:var(--pink);font-weight:900;font-size:20px;letter-spacing:.5px}
+.coin{background:#1a2a4a;padding:7px 13px;border-radius:20px;border:1px solid #2a3a5a;font-size:13px}
+.page{display:none}.page.active{display:block}
+.section-title{padding:18px 20px 10px;font-size:21px;font-weight:800}
+.avatar{width:150px;height:150px;border-radius:50%;margin:28px auto 10px;padding:3px;background:linear-gradient(135deg,var(--pink),#8a2be2)}
 .avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
-.user{text-align:center;margin:10px 0 20px}
-.btns{display:flex;gap:15px;justify-content:center;margin:20px}
-.btn{padding:12px 30px;border-radius:25px;border:none;font-weight:700}
+.user{text-align:center;margin:10px 0 20px;font-weight:700}
+.btns{display:flex;gap:12px;justify-content:center;margin:20px}
+.btn{padding:12px 27px;border-radius:25px;border:none;font-weight:700;cursor:pointer}
 .skip{background:#1a2a4a;color:#fff;border:1px solid #2a3a5a}
-.follow{background:#ff2d5a;color:#fff}
-.tips{background:#111d36;margin:20px;border-radius:15px;padding:15px;border:1px solid #1a2a4a;font-size:13px}
-.tabRow{display:flex;background:#111d36;margin:15px;border-radius:12px;padding:5px}
-.tab{flex:1;text-align:center;padding:12px;border-radius:10px;color:#6b7a99}
-.tab.active{background:#ffcc00;color:#000;font-weight:700}
-.service{background:#111d36;margin:10px 15px;padding:14px;border-radius:12px;display:flex;justify-content:space-between;border:1px solid #1a2a4a}
-.pill{padding:6px 14px;border-radius:20px;border:none;font-weight:700}
-.red{background:#ff2d5a;color:#fff} .blue{background:#0a84ff;color:#fff}
-.bottom{position:fixed;bottom:0;left:0;right:0;display:flex;background:#0f1a33;border-top:1px solid #1a2a4a;padding:10px 0;justify-content:space-around}
-.nav{color:#6b7a99;text-align:center;font-size:12px} .nav.active{color:#ffcc00}
+.follow{background:var(--pink);color:#fff}
+.tips{background:var(--panel);margin:20px;border-radius:15px;padding:16px;border:1px solid var(--line);font-size:13px;line-height:1.8}
+.tabRow{display:flex;background:var(--panel);margin:15px;border-radius:12px;padding:5px}
+.tab{flex:1;text-align:center;padding:12px;border-radius:10px;color:var(--muted);cursor:pointer}
+.tab.active{background:var(--yellow);color:#000;font-weight:700}
+.service{background:var(--panel);margin:10px 15px;padding:14px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line)}
+.service-info{min-width:0;overflow-wrap:anywhere}
+.service-name{font-weight:650}
+.small{color:var(--muted);font-size:11px;display:block;margin-top:4px}
+.pill{padding:7px 12px;border-radius:20px;border:none;font-weight:700;white-space:nowrap;cursor:pointer}
+.red{background:var(--pink);color:#fff}.blue{background:#0a84ff;color:#fff}
+.bottom{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--header);border-top:1px solid var(--line);padding:10px 0;justify-content:space-around;z-index:10}
+.nav{color:var(--muted);text-align:center;font-size:12px;cursor:pointer;min-width:65px}
+.nav.active{color:var(--yellow)}
+.nav-icon{font-size:20px;line-height:1.5}
+.card{background:var(--panel);margin:12px 15px;padding:17px;border-radius:14px;border:1px solid var(--line)}
+input,select{width:100%;padding:13px;margin:8px 0;background:#0a1020;color:#fff;border:1px solid #2a3a5a;border-radius:9px;font-size:14px}
+.action{background:var(--pink);color:white;border:0;padding:12px 18px;border-radius:9px;font-weight:700;cursor:pointer;margin-top:8px}
+.secondary{background:#1a2a4a;color:white;border:1px solid #2a3a5a}
+.muted{color:var(--muted);font-size:13px}
+.balance{font-size:27px;font-weight:850;margin-top:8px}
+.modal{display:none;position:fixed;inset:0;background:#000b;z-index:20;align-items:center;justify-content:center;padding:18px}
+.modal.show{display:flex}
+.modal-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;width:100%;max-width:420px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.close{background:none;border:0;color:#fff;font-size:24px}
+.empty{text-align:center;color:var(--muted);padding:25px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.notice{margin:12px 15px;padding:12px;border-radius:10px;background:#1a2a4a;color:#cbd5e1;font-size:12px}
 </style>
 </head>
 <body>
-<div class="header"><div class="logo">TTBoost</div><div class="coin">🪙 <span id="c">3</span></div></div>
 
-<div id="p-home">
- <div class="avatar"><img id="av" src="https://i.pravatar.cc/300?img=5"></div>
- <div class="user" id="un">@heckler_the_klown</div>
- <div class="btns"><button class="btn skip" onclick="skip()">Skip</button><button class="btn follow" onclick="follow()">Follow +5 🪙</button></div>
+<div class="header">
+ <div class="logo">BOOSTORA</div>
+ <div class="coin">🪙 ₦<span id="headerBalance">0.00</span></div>
+</div>
+
+<section id="homePage" class="page active">
+ <div class="avatar"><img id="avatarImage" src="https://i.pravatar.cc/300?img=5" alt="Profile"></div>
+ <div class="user" id="homeUsername">Welcome to BOOSTORA</div>
+ <div class="btns">
+  <button class="btn skip" onclick="skipProfile()">Skip</button>
+  <button class="btn follow" onclick="openAuth()">Get Started</button>
+ </div>
  <div class="tips">
-  <b>Tips</b><br><br>1 Click the button 2 Open Official App<br>3 Give follow/like 4 Back to TTBoost<br>5 Get Coins<br><br><span style="color:#ff5a5a;font-size:11px">Unfollow after completing a task may lead to coin loss.</span>
+  <b>Welcome to BOOSTORA</b><br><br>
+  1. Create or sign in to your account.<br>
+  2. Fund your wallet securely.<br>
+  3. Choose a social media service.<br>
+  4. Enter your public profile or post link.<br>
+  5. Submit and track your order.<br><br>
+  <span style="color:#ff8585;font-size:11px">Only order services for accounts and content you are authorised to manage.</span>
+ </div>
+ <div class="card">
+  <b>Grow your social presence</b>
+  <p class="muted" style="margin-top:7px">Choose services for Instagram, TikTok, YouTube and more in the Store.</p>
+  <button class="action" onclick="go('store')">Explore Store</button>
+ </div>
+</section>
+
+<section id="storePage" class="page">
+ <div class="section-title">Store</div>
+ <div class="tabRow">
+  <div class="tab active" id="tabProfile" onclick="switchTab('Profile')">Profile</div>
+  <div class="tab" id="tabVideo" onclick="switchTab('Video')">Video</div>
+ </div>
+ <div class="tabRow" id="platformTabs">
+  <div class="tab active" onclick="choosePlatform('All',this)">All</div>
+  <div class="tab" onclick="choosePlatform('Instagram',this)">Instagram</div>
+  <div class="tab" onclick="choosePlatform('TikTok',this)">TikTok</div>
+  <div class="tab" onclick="choosePlatform('YouTube',this)">YouTube</div>
+ </div>
+ <div id="serviceList"><div class="empty">Loading services...</div></div>
+</section>
+
+<section id="morePage" class="page">
+ <div class="section-title">More</div>
+ <div class="card">
+  <div class="muted">Wallet Balance</div>
+  <div class="balance">₦<span id="moreBalance">0.00</span></div>
+  <button class="action" onclick="showMore('wallet')">Wallet & Fund Account</button>
+ </div>
+ <div class="service" onclick="showMore('orders')"><span>📦 My Orders</span><span>›</span></div>
+ <div class="service" onclick="showMore('history')"><span>🪙 Transaction History</span><span>›</span></div>
+ <div class="service" onclick="showMore('account')"><span>👤 Manage Account</span><span>›</span></div>
+ <div class="service" onclick="showMore('faq')"><span>❓ FAQ</span><span>›</span></div>
+ <div class="service" onclick="showMore('contact')"><span>💬 Contact & Support</span><span>›</span></div>
+ <div class="card" id="moreDetail"><p class="muted">Choose an option above.</p></div>
+ <div class="card">
+  <button class="action secondary" style="width:100%" onclick="logout()">Sign Out</button>
+ </div>
+</section>
+
+<div class="bottom">
+ <div class="nav active" id="navHome" onclick="go('home')"><div class="nav-icon">🏠</div>Home</div>
+ <div class="nav" id="navStore" onclick="go('store')"><div class="nav-icon">🛍️</div>Store</div>
+ <div class="nav" id="navMore" onclick="go('more')"><div class="nav-icon">☰</div>More</div>
+</div>
+
+<div class="modal" id="authModal">
+ <div class="modal-box">
+  <div class="modal-head"><b id="authTitle">Sign In</b><button class="close" onclick="closeModal('authModal')">×</button></div>
+  <input id="authName" placeholder="Full name" style="display:none">
+  <input id="authEmail" type="email" placeholder="Email address">
+  <input id="authPassword" type="password" placeholder="Password">
+  <button class="action" style="width:100%" id="authSubmit" onclick="submitAuth()">Sign In</button>
+  <p class="muted" style="text-align:center;margin-top:15px" id="authSwitch">New here? <a href="#" onclick="setAuthMode('signup');return false" style="color:#ffcc00">Create account</a></p>
+  <p id="authMessage" class="muted" style="margin-top:10px"></p>
  </div>
 </div>
 
-<div id="p-store" style="display:none">
- <div style="padding:15px 20px;font-size:20px;font-weight:800">Store</div>
- <div class="tabRow"><div class="tab active" id="tP" onclick="sw('Profile')">Profile</div><div class="tab" id="tV" onclick="sw('Video')">Video</div></div>
- <div id="list"></div>
-</div>
-
-<div id="p-more" style="display:none"><div style="padding:15px 20px;font-size:20px;font-weight:800">More - Same as your video</div><div class="service"><span>Wallet & Fund Account</span><span>›</span></div><div class="service"><span>My Orders</span><span>›</span></div><div class="service"><span>Coin History</span><span>›</span></div></div>
-
-<div class="bottom">
- <div class="nav active" id="n-home" onclick="go('home')">🏠<br>Home</div>
- <div class="nav" id="n-store" onclick="go('store')">🛍️<br>Store</div>
- <div class="nav" id="n-more" onclick="go('more')">☰<br>More</div>
+<div class="modal" id="orderModal">
+ <div class="modal-box">
+  <div class="modal-head"><b>Place Order</b><button class="close" onclick="closeModal('orderModal')">×</button></div>
+  <p id="selectedService" class="muted"></p>
+  <input id="orderLink" placeholder="Public profile or post link">
+  <input id="orderQuantity" type="number" placeholder="Quantity" min="1">
+  <p id="orderCost" class="muted"></p>
+  <button class="action" style="width:100%" onclick="submitOrder()">Submit Order</button>
+  <p id="orderMessage" class="muted" style="margin-top:10px"></p>
+ </div>
 </div>
 
 <script>
-let coins=parseInt(localStorage.getItem('coins')||'3'); document.getElementById('c').innerText=coins;
-let users=['@heckler_the_klown','@g_zes','@leeminho','@amara_lagos','@boostora']; let i=0;
-let data={Profile:[['+200','','100'],['+400','17% OFF','200'],['+900','26% OFF','400'],['+2000','33% OFF','1000'],['+4300','38% OFF','2000'],['+9000','44% OFF','4000']],Video:[['+300','','80'],['+600','17% OFF','240'],['+1300','25% OFF','800'],['+2700','29% OFF','1600'],['+5600','33% OFF','4000'],['+11500','39% OFF','8000']]};
-let cur='Profile';
-function go(p){document.getElementById('p-home').style.display=p=='home'?'block':'none';document.getElementById('p-store').style.display=p=='store'?'block':'none';document.getElementById('p-more').style.display=p=='more'?'block':'none';document.querySelectorAll('.nav').forEach(e=>e.classList.remove('active'));document.getElementById('n-'+p).classList.add('active');if(p=='store')render();}
-function sw(t){cur=t;document.getElementById('tP').classList.toggle('active',t=='Profile');document.getElementById('tV').classList.toggle('active',t=='Video');render();}
-function render(){let l=data[cur];document.getElementById('list').innerHTML=l.map(s=>`<div class="service"><span>${cur=='Profile'?'👤':'❤️'} ${s[0]} <small style="color:#6b7a99">${s[1]}</small></span><span><button class="pill red">${cur=='Profile'?'$'+(s[0].replace('+','')*0.01+2).toFixed(2):'$'+(s[0].replace('+','')*0.006).toFixed(2)}</button> <button class="pill blue" onclick="buy(${s[2]})">${s[2]} 🪙</button></span></div>`).join('');}
-function skip(){i=(i+1)%users.length;document.getElementById('un').innerText=users[i];document.getElementById('av').src='https://i.pravatar.cc/300?img='+(5+i);}
-function follow(){coins+=5;localStorage.setItem('coins',coins);document.getElementById('c').innerText=coins;alert('Followed '+document.getElementById('un').innerText+' +5 coins!');skip();}
-function buy(cost){if(coins<cost){alert('Not enough coins! Follow to earn.');go('home');return;}coins-=cost;localStorage.setItem('coins',coins);document.getElementById('c').innerText=coins;alert('Order placed! -'+cost+' coins');}
-render();
+const SUPABASE_URL='https://zjtmdapnbypftvrlfuue.supabase.co';
+const SUPABASE_KEY='sb_publishable_SMrC3NQlEKey0D9igmu4Yw_6zzzZBYN';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let currentUser=null,profile=null,services=[],orders=[],transactions=[];
+let currentTab='Profile',currentPlatform='All',selectedService=null,authMode='login';
+let demoProfiles=['@heckler_the_klown','@g_zes','@leeminho','@amara_lagos','@boostora'];
+let demoIndex=0;
+
+function money(value){return Number(value||0).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function safe(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function go(page){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(page+'Page').classList.add('active');
+ document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+ document.getElementById('nav'+page[0].toUpperCase()+page.slice(1)).classList.add('active');
+ if(page==='store')renderServices();
+ if(page==='more')updateBalances();
+}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function openAuth(){if(currentUser)return;setAuthMode('login');document.getElementById('authModal').classList.add('show')}
+function setAuthMode(mode){
+ authMode=mode;
+ document.getElementById('authTitle').textContent=mode==='signup'?'Create Account':'Sign In';
+ document.getElementById('authName').style.display=mode==='signup'?'block':'none';
+ document.getElementById('authSubmit').textContent=mode==='signup'?'Create Account':'Sign In';
+ document.getElementById('authSwitch').innerHTML=mode==='signup'?'Already registered? <a href="#" onclick="setAuthMode(\\'login\\');return false" style="color:#ffcc00">Sign in</a>':'New here? <a href="#" onclick="setAuthMode(\\'signup\\');return false" style="color:#ffcc00">Create account</a>';
+ document.getElementById('authMessage').textContent='';
+}
+async function submitAuth(){
+ const email=document.getElementById('authEmail').value.trim();
+ const password=document.getElementById('authPassword').value;
+ const name=document.getElementById('authName').value.trim();
+ const msg=document.getElementById('authMessage');
+ if(!email||!password){msg.textContent='Enter your email and password.';return}
+ msg.textContent='Please wait...';
+ let result;
+ if(authMode==='signup'){
+  result=await db.auth.signUp({email,password,options:{data:{full_name:name}}});
+ }else result=await db.auth.signInWithPassword({email,password});
+ if(result.error){msg.textContent=result.error.message;return}
+ if(!result.data.session){msg.textContent='Check your email to confirm your account, then sign in.';return}
+ currentUser=result.data.user;
+ closeModal('authModal');
+ await loadDashboard();
+}
+async function loadProfile(){
+ const {data,error}=await db.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
+ if(error){console.error(error);return}
+ profile=data;
+ if(!profile){
+  const {data:created,error:createError}=await db.from('profiles').insert({id:currentUser.id,full_name:currentUser.user_metadata?.full_name||currentUser.email}).select().single();
+  if(!createError)profile=created;
+ }
+}
+async function loadServices(){
+ const {data,error}=await db.from('services').select('*').eq('is_active',true).order('name');
+ if(error){console.error(error);document.getElementById('serviceList').innerHTML='<div class="empty">Unable to load services. Please try again.</div>';return}
+ services=data||[];
+ renderServices();
+}
+async function loadOrders(){
+ const {data,error}=await db.from('orders').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);
+ if(!error)orders=data||[];
+}
+async function loadTransactions(){
+ const {data,error}=await db.from('transactions').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(50);
+ if(!error)transactions=data||[];
+}
+function updateBalances(){
+ const balance=Number(profile?.balance||0);
+ document.getElementById('headerBalance').textContent=money(balance);
+ document.getElementById('moreBalance').textContent=money(balance);
+}
+async function loadDashboard(){
+ await Promise.all([loadProfile(),loadServices(),loadOrders(),loadTransactions()]);
+ updateBalances();
+ document.getElementById('homeUsername').textContent=profile?.full_name||currentUser.email;
+}
+function switchTab(tab){
+ currentTab=tab;
+ document.getElementById('tabProfile').classList.toggle('active',tab==='Profile');
+ document.getElementById('tabVideo').classList.toggle('active',tab==='Video');
+ renderServices();
+}
+function choosePlatform(platform,element){
+ currentPlatform=platform;
+ document.querySelectorAll('#platformTabs .tab').forEach(t=>t.classList.remove('active'));
+ element.classList.add('active');
+ renderServices();
+}
+function renderServices(){
+ const list=document.getElementById('serviceList');
+ if(!services.length){list.innerHTML='<div class="empty">No active services available yet.</div>';return}
+ const filtered=services.filter(s=>{
+  const text=(s.name+' '+s.type+' '+s.platform).toLowerCase();
+  const video=text.includes('view')||text.includes('video');
+  const matchesTab=currentTab==='Video'?video:!video;
+  const matchesPlatform=currentPlatform==='All'||String(s.platform||'').toLowerCase().includes(currentPlatform.toLowerCase())||text.includes(currentPlatform.toLowerCase());
+  return matchesTab&&matchesPlatform;
+ });
+ if(!filtered.length){list.innerHTML='<div class="empty">No services in this category yet.</div>';return}
+ list.innerHTML=filtered.map((s,i)=>`
+  <div class="service">
+   <div class="service-info">
+    <div class="service-name">${safe(s.name)}</div>
+    <span class="small">${safe(s.description||s.platform||'Social media service')} · Min ${Number(s.min_order||1)} · Max ${Number(s.max_order||100000)}</span>
+   </div>
+   <div style="text-align:right">
+    <div style="color:var(--pink);font-weight:800;font-size:13px">₦${money(s.price_per_1000)}/1k</div>
+    <button class="pill blue" style="margin-top:6px" onclick="openOrder(${i},'${safe(s.id)}')">Order</button>
+   </div>
+  </div>`).join('');
+ window.visibleServices=filtered;
+}
+function openOrder(index,id){
+ if(!currentUser){openAuth();return}
+ selectedService=services.find(s=>String(s.id)===String(id));
+ if(!selectedService)return;
+ document.getElementById('selectedService').textContent=selectedService.name+' — ₦'+money(selectedService.price_per_1000)+' per 1,000';
+ document.getElementById('orderQuantity').value=selectedService.min_order||1;
+ document.getElementById('orderQuantity').min=selectedService.min_order||1;
+ document.getElementById('orderQuantity').max=selectedService.max_order||100000;
+ document.getElementById('orderLink').value='';
+ document.getElementById('orderMessage').textContent='';
+ updateOrderCost();
+ document.getElementById('orderModal').classList.add('show');
+}
+function updateOrderCost(){
+ if(!selectedService)return;
+ const quantity=Number(document.getElementById('orderQuantity').value||0);
+ const cost=quantity*Number(selectedService.price_per_1000)/1000;
+ document.getElementById('orderCost').textContent='Estimated total: ₦'+money(cost);
+}
+document.getElementById('orderQuantity').addEventListener('input',updateOrderCost);
+async function submitOrder(){
+ if(!currentUser||!selectedService)return;
+ const link=document.getElementById('orderLink').value.trim();
+ const quantity=Number(document.getElementById('orderQuantity').value);
+ const msg=document.getElementById('orderMessage');
+ if(!link||!/^https?:\/\//i.test(link)){msg.textContent='Enter a valid public link beginning with https://';return}
+ if(!Number.isInteger(quantity)||quantity<Number(selectedService.min_order)||quantity>Number(selectedService.max_order)){msg.textContent='Quantity is outside the allowed range.';return}
+ msg.textContent='Submitting order...';
+ const {data,error}=await db.rpc('place_order',{p_service_id:selectedService.id,p_link:link,p_quantity:quantity});
+ if(error){msg.textContent=error.message;return}
+ msg.textContent='Order submitted successfully.';
+ await loadProfile();await loadOrders();updateBalances();
+ setTimeout(()=>closeModal('orderModal'),1000);
+}
+async function showMore(section){
+ const box=document.getElementById('moreDetail');
+ if(!currentUser){openAuth();return}
+ if(section==='wallet'){
+  box.innerHTML=`<b>Wallet & Fund Account</b><p class="muted" style="margin-top:8px">Current balance: ₦${money(profile?.balance)}</p><input id="fundAmount" type="number" min="100" placeholder="Amount in Naira"><button class="action" onclick="fundWallet()">Continue to Payment</button><p class="muted" id="fundMessage"></p>`;
+ }else if(section==='orders'){
+  await loadOrders();
+  box.innerHTML='<b>My Orders</b>'+ (orders.length?orders.map(o=>`<div class="row"><span>Order #${safe(String(o.id).slice(0,8))}<br><span class="muted">${safe(o.status)}</span></span><b>₦${money(o.amount)}</b></div>`).join(''):'<div class="empty">No orders yet.</div>');
+ }else if(section==='history'){
+  await loadTransactions();
+  box.innerHTML='<b>Transaction History</b>'+(transactions.length?transactions.map(t=>`<div class="row"><span>${safe(t.type)} · ${safe(t.status)}<br><span class="muted">${safe(new Date(t.created_at).toLocaleString())}</span></span><b>₦${money(t.amount)}</b></div>`).join(''):'<div class="empty">No transactions yet.</div>');
+ }else if(section==='account'){
+  box.innerHTML=`<b>Manage Account</b><p class="muted" style="margin-top:10px">${safe(currentUser.email)}</p><input id="accountName" value="${safe(profile?.full_name||'')}" placeholder="Full name"><button class="action" onclick="saveAccount()">Save Changes</button><p class="muted" id="accountMessage"></p>`;
+ }else if(section==='faq'){
+  box.innerHTML='<b>Frequently Asked Questions</b><div class="row"><span>How do I place an order?</span></div><p class="muted">Choose a service in Store, enter your public link and quantity, then submit.</p><div class="row"><span>How do I fund my wallet?</span></div><p class="muted">Open Wallet & Fund Account and complete the secure payment process.</p><div class="row"><span>Where can I track orders?</span></div><p class="muted">Open My Orders in More.</p>';
+ }else if(section==='contact'){
+  box.innerHTML='<b>Contact & Support</b><p class="muted" style="margin-top:10px">For assistance with an order or payment, contact BOOSTORA support through your official support channel.</p>';
+ }
+}
+async function saveAccount(){
+ const name=document.getElementById('accountName').value.trim();
+ const msg=document.getElementById('accountMessage');
+ if(!name){msg.textContent='Enter your name.';return}
+ const {error}=await db.from('profiles').update({full_name:name}).eq('id',currentUser.id);
+ if(error){msg.textContent=error.message;return}
+ profile.full_name=name;document.getElementById('homeUsername').textContent=name;msg.textContent='Account updated.';
+}
+async function fundWallet(){
+ const amount=Number(document.getElementById('fundAmount').value);
+ const msg=document.getElementById('fundMessage');
+ if(!Number.isFinite(amount)||amount<100){msg.textContent='Minimum funding amount is ₦100.';return}
+ msg.textContent='Connecting to secure payment...';
+ const {data,error}=await db.functions.invoke('paystack-wallet',{body:{action:'initialize',amount,callback_url:location.href.split('?')[0]}});
+ if(error){msg.textContent=error.message;return}
+ const url=data?.data?.authorization_url||data?.authorization_url;
+ if(!url){msg.textContent=data?.message||'Could not initialize payment.';return}
+ location.href=url;
+}
+async function verifyPayment(){
+ const params=new URLSearchParams(location.search);
+ const reference=params.get('reference');
+ if(!reference||!currentUser)return;
+ const {data,error}=await db.functions.invoke('paystack-wallet',{body:{action:'verify',reference}});
+ if(error){alert('Payment verification failed: '+error.message);return}
+ alert(data?.message||'Payment verification completed.');
+ history.replaceState({},document.title,location.pathname);
+ await loadProfile();await loadTransactions();updateBalances();
+}
+async function logout(){
+ await db.auth.signOut();
+ currentUser=null;profile=null;orders=[];transactions=[];
+ updateBalances();go('home');
+}
+function skipProfile(){
+ demoIndex=(demoIndex+1)%demoProfiles.length;
+ document.getElementById('homeUsername').textContent=demoProfiles[demoIndex];
+ document.getElementById('avatarImage').src='https://i.pravatar.cc/300?img='+(5+demoIndex);
+}
+async function start(){
+ const {data}=await db.auth.getSession();
+ if(data.session){
+  currentUser=data.session.user;
+  await loadDashboard();
+  await verifyPayment();
+ }else{
+  document.getElementById('homeUsername').textContent='Welcome to BOOSTORA';
+  await loadServices();
+  if(new URLSearchParams(location.search).has('reference'))openAuth();
+ }
+ db.auth.onAuthStateChange(async(event,session)=>{
+  if(event==='SIGNED_IN'&&session&&!currentUser){
+   currentUser=session.user;await loadDashboard();await verifyPayment();
+  }
+ });
+}
+start();
 </script>
 </body>
 </html>
